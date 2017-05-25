@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Detrasher</string>
+    <string name="login_content">Login to the workspace</string>
+    <string name="login_button_text">Log In</string>
+    <string name="userID">vatsa</string>
+    <string name="userPassword">srivatsa</string>
+</resources>
