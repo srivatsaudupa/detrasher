@@ -12,11 +12,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.scu.detrasher.DetrashLoginActivity"
     android:background="@color/loginBackground">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/detrasher_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@color/colorPrimary"
+        android:titleTextColor="@color/pureWhite"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp" />
     <LinearLayout
         android:id="@+id/user_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteY="8dp"
+            tools:layout_editor_absoluteX="8dp"
+            android:weightSum="1">
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/login_content_holder"
             android:layout_width="match_parent"

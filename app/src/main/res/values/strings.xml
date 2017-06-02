@@ -4,4 +4,6 @@
     <string name="login_button_text">Log In</string>
     <string name="userID">vatsa</string>
     <string name="userPassword">srivatsa</string>
+    <string name="manager_page_header">Manager Self Service</string>
+    <string name="staff_page_header">Staff Self Service</string>
 </resources>

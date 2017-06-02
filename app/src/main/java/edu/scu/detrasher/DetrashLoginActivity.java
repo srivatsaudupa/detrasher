@@ -7,6 +7,7 @@ package edu.scu.detrasher;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,7 +20,9 @@ public class DetrashLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detrash_login);
-
+        Toolbar appToolBar = (Toolbar) findViewById(R.id.detrasher_toolbar);
+        setSupportActionBar(appToolBar);
+        appToolBar.setTitleTextColor(0xFFFFFFFF);
         /* Button click event */
         Button logIn = (Button) findViewById(R.id.loginButton);
         final EditText userIdEditor = (EditText)findViewById(userId);
@@ -30,17 +33,29 @@ public class DetrashLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String userId = userIdEditor.getText().toString();
                 String userPassword = userPasswordEditor.getText().toString();
-                User returnObj = authentication(userId, userPassword);
-                if(returnObj == null)
+                if(userId.isEmpty())
                 {
-                    Toast.makeText(getApplicationContext(), "Invalid Login!", Toast.LENGTH_SHORT).show();
+                    userIdEditor.setError("Username is needed");
                 }
-                else
+                else if(userPassword.isEmpty())
                 {
-                    Toast.makeText(getApplicationContext(), "Welcome! "+returnObj.get_user_full_name(), Toast.LENGTH_SHORT).show();
-                    Intent lSuccess = new Intent(DetrashLoginActivity.this, DetrasherMainActivity.class);
-                    startActivity(lSuccess);
-                    finish();
+                    userPasswordEditor.setError("Password is needed");
+                }
+                else {
+                    User returnObj = authentication(userId, userPassword);
+                    if (returnObj == null) {
+                        Toast.makeText(getApplicationContext(), "Invalid Login!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent lSuccess;
+                        Toast.makeText(getApplicationContext(), "Welcome! " + returnObj.get_user_full_name(), Toast.LENGTH_SHORT).show();
+                        if (returnObj.get_user_role_no() == 1) {
+                            lSuccess = new Intent(DetrashLoginActivity.this, DetrasherMainActivity.class);
+                        } else {
+                            lSuccess = new Intent(DetrashLoginActivity.this, DetrasherStaffActivity.class);
+                        }
+                        startActivity(lSuccess);
+                        finish();
+                    }
                 }
             }
         });

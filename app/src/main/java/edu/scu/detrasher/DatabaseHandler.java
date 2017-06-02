@@ -67,8 +67,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /* 1. Create user data */
     public void createUsers()
     {
-        User user1 = new User("jack", "Jack Smith", "jacksmith123", 1);
-        User user2 = new User("john", "John Doe", "johndoe123", 2);
+        User user1 = new User("jack", "Jack Smith", "jack", 1);
+        User user2 = new User("john", "John Doe", "john", 2);
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues user_values = new ContentValues();
