@@ -19,8 +19,9 @@ public class User {
     }
     /* Default constructor */
     /* Overloaded */
-    public User(String user_name, String user_full_name, String user_password, int user_role_no)
+    public User(int user_id, String user_name, String user_full_name, String user_password, int user_role_no)
     {
+        this._user_id = user_id;
         this._user_name = user_name;
         this._user_full_name = user_full_name;
         this._user_password = user_password;

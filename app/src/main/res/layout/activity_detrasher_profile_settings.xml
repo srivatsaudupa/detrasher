@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:screenOrientation = "portrait"
+    android:background="@color/pureWhite"
+    tools:context="edu.scu.detrasher.DetrasherProfileActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/detrasher_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
+        android:titleTextColor="@color/pureWhite"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="368dp"
+        android:layout_height="495dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:weightSum="1">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteY="8dp"
+            tools:layout_editor_absoluteX="8dp"
+            android:weightSum="1"
+            android:layout_weight="0.22">
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/parent_layout"
+            android:layout_width="368dp"
+            android:layout_height="249dp"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteY="8dp"
+            tools:layout_editor_absoluteX="8dp"
+            android:weightSum="1">
+            <LinearLayout
+                android:id="@+id/profile_layout"
+                android:layout_width="match_parent"
+                android:layout_height="325dp"
+                android:orientation="horizontal">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/customlayoutborder">
+                    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:stretchColumns="1">
+                        <TableRow android:gravity="center_horizontal">
+                            <ImageView
+                                android:id="@+id/user_profile_icon"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                app:srcCompat="@drawable/user_profile"
+                                tools:layout_editor_absoluteX="16dp"
+                                tools:layout_editor_absoluteY="16dp" />
+                        </TableRow>
+                        <TableRow
+                            android:gravity="center_horizontal">
+                            <TextView
+                                android:id="@+id/username_label"
+                                android:text="@string/username_label"
+                                android:padding="3dip" />
+                            <TextView
+                                android:id="@+id/username_content"
+                                android:gravity="right"
+                                android:padding="3dip" />
+                        </TableRow>
+
+                        <TableRow
+                            android:gravity="center_horizontal">
+                            <TextView
+                                android:id="@+id/userfullname_label"
+                                android:text="@string/userfullname_label"
+                                android:padding="3dip" />
+                            <TextView
+                                android:id="@+id/userfullname_content"
+                                android:gravity="right"
+                                android:padding="3dip" />
+                        </TableRow>
+                        <TableRow
+                            android:gravity="center_horizontal">
+                            <TextView
+                                android:id="@+id/userrole_label"
+                                android:text="@string/user_role_descr_lable"
+                                android:padding="3dip" />
+
+                            <TextView
+                                android:id="@+id/userrole_content"
+                                android:gravity="right"
+                                android:padding="3dip" />
+                        </TableRow>
+                        <TableRow
+                            android:gravity="center_horizontal">
+                            <Button
+                                android:id="@+id/changePasswordUtility"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:text="@string/change_password_button_txt" />
+                        </TableRow>
+                    </TableLayout>
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="368dp"
+            android:layout_height="85dp"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteY="8dp"
+            tools:layout_editor_absoluteX="8dp"
+            android:weightSum="1"
+            android:layout_weight="0.51">
+
+            <ImageView
+                android:id="@+id/sculogo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/go_green_1"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="16dp" />
+            android:orientation="horizontal">
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

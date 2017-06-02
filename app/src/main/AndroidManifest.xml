@@ -19,6 +19,8 @@
         </activity>
         <activity android:name=".DetrasherMainActivity" android:label="@string/manager_page_header"></activity>
         <activity android:name=".DetrasherStaffActivity" android:label="@string/staff_page_header"></activity>
+        <activity android:name=".DetrasherProfileActivity" android:label="@string/profile_page_header"></activity>
+        <activity android:name=".DetrasherProfilePwdActivity" android:label="@string/profile_password_page_header"></activity>
     </application>
 
 </manifest>

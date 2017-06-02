@@ -52,10 +52,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         /* Create user table */
         /* Contains User ID, Full Name and Role value */
-        String sqlStatement_user = "CREATE TABLE "+TABLE_USERS+" ("+USER_ID+" INTEGER PRIMARY KEY, "+USER_NAME+" TEXT, "+USER_FULLNAME+" TEXT, "+USER_PASSWORD+" TEXT,"+USER_ROLE_NO+" INTEGER)";
-        String sqlStatement_roles = "CREATE TABLE "+TABLE_ROLES+" ("+USER_ROLE_NO+" INTEGER PRIMARY KEY, "+USER_ROLE_DESCR+" TEXT)";
-        String sqlStatement_location = "CREATE TABLE "+TABLE_LOCATION+" ("+LOCATION_ID+" INTEGER PRIMARY KEY, "+ LOCATION_NAME+" TEXT, "+ LOCATION_FLOOR +" INTEGER, "+LOCATION_TRASH_ID+" INTEGER, "+LOCATION_TRASH_LEVEL+" INTEGER)";
-        String sqlStatement_task = "CREATE TABLE "+TABLE_TASKS+" ("+TASK_ID+" INTEGER PRIMARY KEY, "+ LOCATION_ID+" INTEGER, "+ USER_ID +" INTEGER, "+TASK_STATUS+" TEXT)";
+        String sqlStatement_user = "CREATE TABLE "+TABLE_USERS+" ("+USER_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+USER_NAME+" TEXT, "+USER_FULLNAME+" TEXT, "+USER_PASSWORD+" TEXT,"+USER_ROLE_NO+" INTEGER)";
+        String sqlStatement_roles = "CREATE TABLE "+TABLE_ROLES+" ("+USER_ROLE_NO+" INTEGER PRIMARY KEY AUTOINCREMENT, "+USER_ROLE_DESCR+" TEXT)";
+        String sqlStatement_location = "CREATE TABLE "+TABLE_LOCATION+" ("+LOCATION_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ LOCATION_NAME+" TEXT, "+ LOCATION_FLOOR +" INTEGER, "+LOCATION_TRASH_ID+" INTEGER, "+LOCATION_TRASH_LEVEL+" INTEGER)";
+        String sqlStatement_task = "CREATE TABLE "+TABLE_TASKS+" ("+TASK_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ LOCATION_ID+" INTEGER, "+ USER_ID +" INTEGER, "+TASK_STATUS+" TEXT)";
         db.execSQL(sqlStatement_user);
         db.execSQL(sqlStatement_roles);
         db.execSQL(sqlStatement_location);
@@ -75,11 +75,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /* 1. Create user data */
     public void createUsers()
     {
-        User user1 = new User("jack", "Jack Smith", "jack", 1);
-        User user2 = new User("john", "John Doe", "john", 2);
+        User user1 = new User(1, "jack", "Jack Smith", "jack", 1);
+        User user2 = new User(2, "john", "John Doe", "john", 2);
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues user_values = new ContentValues();
+        user_values.put(USER_ID, user1.get_user_id());
         user_values.put(USER_NAME, user1.get_user_name());
         user_values.put(USER_FULLNAME, user1.get_user_full_name());
         user_values.put(USER_PASSWORD, user1.get_user_password());
@@ -88,6 +89,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         /* Insert data to table */
         db.insert(TABLE_USERS, null, user_values);
 
+        user_values.put(USER_ID, user2.get_user_id());
         user_values.put(USER_NAME, user2.get_user_name());
         user_values.put(USER_FULLNAME, user2.get_user_full_name());
         user_values.put(USER_PASSWORD, user2.get_user_password());
@@ -129,16 +131,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         /* Create a cursor to read data */
 
-            Cursor userCursor = db.query(TABLE_USERS, new String[]{USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, USER_NAME + "=?", new String[]{user_data.get_user_name()}, null, null, null, null);
+            Cursor userCursor = db.query(TABLE_USERS, new String[]{USER_ID, USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, USER_NAME + "=?", new String[]{user_data.get_user_name()}, null, null, null, null);
         try {
             if (userCursor == null)
                 return null;
             userCursor.moveToFirst();
-            String upass = userCursor.getString(2);
+            String upass = userCursor.getString(3);
             if (upass.equals(user_data.get_user_password())) {
-                user_data.set_user_name(userCursor.getString(0));
-                user_data.set_user_fullname(userCursor.getString(1));
-                user_data.set_user_role_no(Integer.parseInt(userCursor.getString(3)));
+                user_data.set_user_id(Integer.parseInt(userCursor.getString(0)));
+                user_data.set_user_name(userCursor.getString(1));
+                user_data.set_user_fullname(userCursor.getString(2));
+                user_data.set_user_password(userCursor.getString(3));
+                user_data.set_user_role_no(Integer.parseInt(userCursor.getString(4)));
                 return user_data;
             } else
                 return null;
@@ -210,7 +214,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getReadableDatabase();
         /* Create a cursor to read data */
-        Cursor userProfileCursor = db.query(TABLE_USERS, new String[] {USER_ID, USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO, USER_ROLE_DESCR}, USER_ID+"=?", new String[] {userId+""}, null,null,null,null);
+        Cursor userProfileCursor = db.query(TABLE_USERS, new String[] {USER_ID, USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, USER_ID+"=?", new String[] {userId+""}, null,null,null,null);
         User userData = new User();
         try {
             if (userProfileCursor == null)
@@ -221,11 +225,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             userData.set_user_fullname(userProfileCursor.getString(2));
             userData.set_user_password(userProfileCursor.getString(3));
             userData.set_user_role_no(Integer.parseInt(userProfileCursor.getString(4)));
-            userData.set_user_role_descr(userProfileCursor.getString(5));
         }
         finally {
             userProfileCursor.close();
         }
+        userData = this.fetchRoleData(userData);
         return userData;
     }
     /* Method 2: Update user profile */
@@ -238,5 +242,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int update = db.update(TABLE_USERS, updateValues, USER_ID+"="+userData.get_user_id(), null);
         db.close();
         return update;
+    }
+    public User fetchRoleData(User user)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor userRoleCursor = db.query(TABLE_ROLES, new String[] {USER_ROLE_DESCR}, USER_ROLE_NO+"=?", new String[] {user.get_user_role_no()+""}, null,null,null,null);
+        if(userRoleCursor == null)
+            return null;
+        userRoleCursor.moveToFirst();
+        user.set_user_role_descr(userRoleCursor.getString(0));
+        return user;
     }
 }

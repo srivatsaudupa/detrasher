@@ -50,8 +50,10 @@ public class DetrashLoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Welcome! " + returnObj.get_user_full_name(), Toast.LENGTH_SHORT).show();
                         if (returnObj.get_user_role_no() == 1) {
                             lSuccess = new Intent(DetrashLoginActivity.this, DetrasherMainActivity.class);
+                            lSuccess.putExtra("userId", returnObj.get_user_id());
                         } else {
                             lSuccess = new Intent(DetrashLoginActivity.this, DetrasherStaffActivity.class);
+                            lSuccess.putExtra("userId", returnObj.get_user_id());
                         }
                         startActivity(lSuccess);
                         finish();
@@ -61,7 +63,7 @@ public class DetrashLoginActivity extends AppCompatActivity {
         });
     }
     private User authentication(String userID, String userPassword){
-        User user_data = new User(userID, "", userPassword, 0);
+        User user_data = new User(0, userID, "", userPassword, 0);
         DatabaseHandler dbConnector = new DatabaseHandler(getApplicationContext());
         dbConnector.createUsers();
         return dbConnector.AuthenticationController(user_data);

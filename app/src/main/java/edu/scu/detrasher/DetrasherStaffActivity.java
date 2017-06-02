@@ -27,8 +27,11 @@ public class DetrasherStaffActivity extends AppCompatActivity {
         ImageView taskManager = (ImageView) findViewById(R.id.taskManager);
 
         /* Junk manager icon */
-        ImageView settings = (ImageView) findViewById(R.id.settings);
+        final ImageView settings = (ImageView) findViewById(R.id.settings);
 
+        /* session data */
+        Intent thisIntent = getIntent();
+        final int userId = thisIntent.getIntExtra("userId", 0);
         /* Click listeners */
         /* Recycle Bin */
         taskManager.setOnClickListener(new View.OnClickListener(){
@@ -44,7 +47,9 @@ public class DetrasherStaffActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+                Intent settingsIntent = new Intent(DetrasherStaffActivity.this, DetrasherProfileActivity.class);
+                settingsIntent.putExtra("userId", userId);
+                startActivity(settingsIntent);
             }
         });
     }
