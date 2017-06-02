@@ -5,11 +5,12 @@ package edu.scu.detrasher;
  */
 
 public class User {
-
+    int _user_id;
     String _user_name;
     String _user_full_name;
     String _user_password;
     int _user_role_no;
+    String _user_role_descr;
 
     /* Constructor */
     public User()
@@ -26,6 +27,10 @@ public class User {
         this._user_role_no = user_role_no;
     }
     /* Get and set method */
+    public int get_user_id()
+    {
+        return this._user_id;
+    }
     public String get_user_name()
     {
         return this._user_name;
@@ -42,6 +47,14 @@ public class User {
     {
         return this._user_role_no;
     }
+    public String get_user_role_descr()
+    {
+        return this._user_role_descr;
+    }
+    public void set_user_id(int value)
+    {
+        this._user_id = value;
+    }
     public void set_user_name(String value)
     {
         this._user_name = value;
@@ -57,5 +70,9 @@ public class User {
     public void set_user_role_no(int value)
     {
         this._user_role_no = value;
+    }
+    public void set_user_role_descr(String value)
+    {
+        this._user_role_descr = value;
     }
 }

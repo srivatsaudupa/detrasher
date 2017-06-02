@@ -128,19 +128,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getReadableDatabase();
         /* Create a cursor to read data */
-        Cursor userCursor = db.query(TABLE_USERS, new String[] {USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, USER_NAME+"=?", new String[] {user_data.get_user_name()}, null,null,null,null);
-        if(userCursor == null)
-            return null;
-        userCursor.moveToFirst();
-        String upass = userCursor.getString(2);
-        if(upass.equals(user_data.get_user_password())) {
-            user_data.set_user_name(userCursor.getString(0));
-            user_data.set_user_fullname(userCursor.getString(1));
-            user_data.set_user_role_no(Integer.parseInt(userCursor.getString(3)));
-            return user_data;
+
+            Cursor userCursor = db.query(TABLE_USERS, new String[]{USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, USER_NAME + "=?", new String[]{user_data.get_user_name()}, null, null, null, null);
+        try {
+            if (userCursor == null)
+                return null;
+            userCursor.moveToFirst();
+            String upass = userCursor.getString(2);
+            if (upass.equals(user_data.get_user_password())) {
+                user_data.set_user_name(userCursor.getString(0));
+                user_data.set_user_fullname(userCursor.getString(1));
+                user_data.set_user_role_no(Integer.parseInt(userCursor.getString(3)));
+                return user_data;
+            } else
+                return null;
         }
-        else
-            return null;
+        finally {
+            userCursor.close();
+        }
     }
 
     /* 4. Create Location data */
@@ -178,20 +183,60 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ArrayList<Location> locationData = new ArrayList<Location>();
         SQLiteDatabase db = this.getReadableDatabase();
         /* Create a cursor to read data */
-        Cursor locationCursor = db.query(TABLE_USERS, new String[] {LOCATION_ID, LOCATION_NAME, LOCATION_FLOOR, LOCATION_TRASH_ID, LOCATION_TRASH_LEVEL}, null, null, null,null,null,null);
-        if(locationCursor == null)
-            return null;
-        locationCursor.moveToFirst();
-        while(locationCursor.moveToNext())
-        {
-            Location locData = new Location();
-            locData.set_location_id(Integer.parseInt(locationCursor.getString(0)));
-            locData.set_location_name(locationCursor.getString(1));
-            locData.set_location_floor(Integer.parseInt(locationCursor.getString(2)));
-            locData.set_location_trash_id(Integer.parseInt(locationCursor.getString(3)));
-            locData.set_location_trash_level(Integer.parseInt(locationCursor.getString(4)));
-            locationData.add(locData);
+        Cursor locationCursor = db.query(TABLE_LOCATION, new String[] {LOCATION_ID, LOCATION_NAME, LOCATION_FLOOR, LOCATION_TRASH_ID, LOCATION_TRASH_LEVEL}, null, null, null,null,null,null);
+        try {
+            if (locationCursor == null)
+                return null;
+            locationCursor.moveToFirst();
+            while (locationCursor.moveToNext()) {
+                Location locData = new Location();
+                locData.set_location_id(Integer.parseInt(locationCursor.getString(0)));
+                locData.set_location_name(locationCursor.getString(1));
+                locData.set_location_floor(Integer.parseInt(locationCursor.getString(2)));
+                locData.set_location_trash_id(Integer.parseInt(locationCursor.getString(3)));
+                locData.set_location_trash_level(Integer.parseInt(locationCursor.getString(4)));
+                locationData.add(locData);
+            }
+        }
+        finally {
+            locationCursor.close();
         }
         return locationData;
+    }
+
+    /* Profile settings methods */
+    /* Method 1: Fetch user data */
+    public User fetchUserData(int userId)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        /* Create a cursor to read data */
+        Cursor userProfileCursor = db.query(TABLE_USERS, new String[] {USER_ID, USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO, USER_ROLE_DESCR}, USER_ID+"=?", new String[] {userId+""}, null,null,null,null);
+        User userData = new User();
+        try {
+            if (userProfileCursor == null)
+                return null;
+            userProfileCursor.moveToFirst();
+            userData.set_user_id(Integer.parseInt(userProfileCursor.getString(0)));
+            userData.set_user_name(userProfileCursor.getString(1));
+            userData.set_user_fullname(userProfileCursor.getString(2));
+            userData.set_user_password(userProfileCursor.getString(3));
+            userData.set_user_role_no(Integer.parseInt(userProfileCursor.getString(4)));
+            userData.set_user_role_descr(userProfileCursor.getString(5));
+        }
+        finally {
+            userProfileCursor.close();
+        }
+        return userData;
+    }
+    /* Method 2: Update user profile */
+    public int updateUserData(User userData)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues updateValues = new ContentValues();
+        updateValues.put(USER_FULLNAME, userData.get_user_full_name());
+        updateValues.put(USER_PASSWORD, userData.get_user_password());
+        int update = db.update(TABLE_USERS, updateValues, USER_ID+"="+userData.get_user_id(), null);
+        db.close();
+        return update;
     }
 }
