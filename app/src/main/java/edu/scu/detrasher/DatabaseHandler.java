@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 /**
  * Created by Srivatsa on 21-05-2017.
  */
@@ -35,6 +37,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String LOCATION_NAME ="location_name";
     private static final String LOCATION_FLOOR ="location_floor";
     private static final String LOCATION_TRASH_ID = "location_trash_id";
+    private static final String LOCATION_TRASH_LEVEL = "location_trash_level";
+
+    /* Task table attributes */
+    private static final String TASK_ID = "task_id";
+    private static final String TASK_STATUS = "task_status";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -47,7 +54,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         /* Contains User ID, Full Name and Role value */
         String sqlStatement_user = "CREATE TABLE "+TABLE_USERS+" ("+USER_ID+" INTEGER PRIMARY KEY, "+USER_NAME+" TEXT, "+USER_FULLNAME+" TEXT, "+USER_PASSWORD+" TEXT,"+USER_ROLE_NO+" INTEGER)";
         String sqlStatement_roles = "CREATE TABLE "+TABLE_ROLES+" ("+USER_ROLE_NO+" INTEGER PRIMARY KEY, "+USER_ROLE_DESCR+" TEXT)";
-        String sqlStatement_location = "CREATE TABLE "+TABLE_LOCATION+" ("+LOCATION_ID+" INTEGER PRIMARY KEY, "+ LOCATION_NAME+" TEXT, "+ LOCATION_FLOOR +" INTEGER, "+LOCATION_TRASH_ID+" INTEGER)";
+        String sqlStatement_location = "CREATE TABLE "+TABLE_LOCATION+" ("+LOCATION_ID+" INTEGER PRIMARY KEY, "+ LOCATION_NAME+" TEXT, "+ LOCATION_FLOOR +" INTEGER, "+LOCATION_TRASH_ID+" INTEGER, "+LOCATION_TRASH_LEVEL+" INTEGER)";
+        String sqlStatement_task = "CREATE TABLE "+TABLE_TASKS+" ("+TASK_ID+" INTEGER PRIMARY KEY, "+ LOCATION_ID+" INTEGER, "+ USER_ID +" INTEGER, "+TASK_STATUS+" TEXT)";
         db.execSQL(sqlStatement_user);
         db.execSQL(sqlStatement_roles);
         db.execSQL(sqlStatement_location);
@@ -138,17 +146,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /* 4. Create Location data */
     public void createLocations()
     {
-        Location loc1 = new Location("Learning Commons", 1, 1);
+        Location loc1 = new Location("Learning Commons", 1, 1, 25);
         this.dbLocInsert(loc1);
-        Location loc2 = new Location("Learning Commons", 1, 2);
+        Location loc2 = new Location("Learning Commons", 1, 2, 46);
         this.dbLocInsert(loc2);
-        Location loc3 = new Location("Learning Commons", 2, 1);
+        Location loc3 = new Location("Learning Commons", 2, 1, 6);
         this.dbLocInsert(loc3);
-        Location loc4 = new Location("Engineering", 3, 1);
+        Location loc4 = new Location("Engineering", 3, 1, 15);
         this.dbLocInsert(loc4);
-        Location loc5 = new Location("Engineering", 3, 2);
+        Location loc5 = new Location("Engineering", 3, 2, 40);
         this.dbLocInsert(loc5);
-        Location loc6 = new Location("Engineering", 3, 1);
+        Location loc6 = new Location("Engineering", 2, 1, 46);
         this.dbLocInsert(loc6);
     }
     /* DB Location insert method */
@@ -159,7 +167,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         locValues.put(LOCATION_NAME, location.get_location_name());
         locValues.put(LOCATION_FLOOR, location.get_location_floor());
         locValues.put(LOCATION_TRASH_ID, location.get_location_trash_id());
+        locValues.put(LOCATION_TRASH_LEVEL, location.get_location_trash_level());
         db.insert(TABLE_LOCATION, null, locValues);
         db.close();
+    }
+
+    /* Method to populate location data */
+    public ArrayList<Location> populateLocationData()
+    {
+        ArrayList<Location> locationData = new ArrayList<Location>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        /* Create a cursor to read data */
+        Cursor locationCursor = db.query(TABLE_USERS, new String[] {LOCATION_ID, LOCATION_NAME, LOCATION_FLOOR, LOCATION_TRASH_ID, LOCATION_TRASH_LEVEL}, null, null, null,null,null,null);
+        if(locationCursor == null)
+            return null;
+        locationCursor.moveToFirst();
+        while(locationCursor.moveToNext())
+        {
+            Location locData = new Location();
+            locData.set_location_id(Integer.parseInt(locationCursor.getString(0)));
+            locData.set_location_name(locationCursor.getString(1));
+            locData.set_location_floor(Integer.parseInt(locationCursor.getString(2)));
+            locData.set_location_trash_id(Integer.parseInt(locationCursor.getString(3)));
+            locData.set_location_trash_level(Integer.parseInt(locationCursor.getString(4)));
+            locationData.add(locData);
+        }
+        return locationData;
     }
 }
