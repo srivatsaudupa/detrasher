@@ -32,6 +32,8 @@ public class DetrasherStaffActivity extends AppCompatActivity {
         /* session data */
         Intent thisIntent = getIntent();
         final int userId = thisIntent.getIntExtra("userId", 0);
+        final int userRole = thisIntent.getIntExtra("userRole", 0);
+
         /* Click listeners */
         /* Recycle Bin */
         taskManager.setOnClickListener(new View.OnClickListener(){
@@ -49,6 +51,7 @@ public class DetrasherStaffActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent settingsIntent = new Intent(DetrasherStaffActivity.this, DetrasherProfileActivity.class);
                 settingsIntent.putExtra("userId", userId);
+                settingsIntent.putExtra("userRole", userRole);
                 startActivity(settingsIntent);
             }
         });
@@ -82,7 +85,17 @@ public class DetrasherStaffActivity extends AppCompatActivity {
 
             case R.id.home:
                 // If home selected
-                Intent homeIntent = new Intent(DetrasherStaffActivity.this, DetrasherStaffActivity.class);
+                Intent thisIntent = getIntent();
+                int role = thisIntent.getIntExtra("userRole",0);
+                Intent homeIntent;
+                if(role == 1) {
+                    homeIntent = new Intent(DetrasherStaffActivity.this, DetrasherMainActivity.class);
+                }
+                else {
+                    homeIntent = new Intent(DetrasherStaffActivity.this, DetrasherStaffActivity.class);
+                }
+                homeIntent.putExtra("userId", thisIntent.getIntExtra("userId",0));
+                homeIntent.putExtra("userRole", role);
                 startActivity(homeIntent);
                 return true;
 

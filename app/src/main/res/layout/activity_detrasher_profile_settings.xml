@@ -50,15 +50,15 @@
                 android:layout_height="325dp"
                 android:orientation="horizontal">
                 <FrameLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="346dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/customlayoutborder">
+                    android:layout_marginRight="5dp">
                     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="@drawable/customlayoutborder"
                         android:stretchColumns="1">
                         <TableRow android:gravity="center_horizontal">
                             <ImageView
@@ -75,10 +75,11 @@
                             <TextView
                                 android:id="@+id/username_label"
                                 android:text="@string/username_label"
+                                android:gravity="center_horizontal"
                                 android:padding="3dip" />
                             <TextView
                                 android:id="@+id/username_content"
-                                android:gravity="right"
+                                android:gravity="center_horizontal"
                                 android:padding="3dip" />
                         </TableRow>
 
@@ -87,10 +88,11 @@
                             <TextView
                                 android:id="@+id/userfullname_label"
                                 android:text="@string/userfullname_label"
+                                android:gravity="center_horizontal"
                                 android:padding="3dip" />
                             <TextView
                                 android:id="@+id/userfullname_content"
-                                android:gravity="right"
+                                android:gravity="center_horizontal"
                                 android:padding="3dip" />
                         </TableRow>
                         <TableRow
@@ -98,11 +100,12 @@
                             <TextView
                                 android:id="@+id/userrole_label"
                                 android:text="@string/user_role_descr_lable"
+                                android:gravity="center_horizontal"
                                 android:padding="3dip" />
 
                             <TextView
                                 android:id="@+id/userrole_content"
-                                android:gravity="right"
+                                android:gravity="center_horizontal"
                                 android:padding="3dip" />
                         </TableRow>
                         <TableRow

@@ -51,9 +51,11 @@ public class DetrashLoginActivity extends AppCompatActivity {
                         if (returnObj.get_user_role_no() == 1) {
                             lSuccess = new Intent(DetrashLoginActivity.this, DetrasherMainActivity.class);
                             lSuccess.putExtra("userId", returnObj.get_user_id());
+                            lSuccess.putExtra("userRole", returnObj.get_user_role_no());
                         } else {
                             lSuccess = new Intent(DetrashLoginActivity.this, DetrasherStaffActivity.class);
                             lSuccess.putExtra("userId", returnObj.get_user_id());
+                            lSuccess.putExtra("userRole", returnObj.get_user_role_no());
                         }
                         startActivity(lSuccess);
                         finish();

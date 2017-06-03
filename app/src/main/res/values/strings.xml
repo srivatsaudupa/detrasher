@@ -18,9 +18,10 @@
 
 
     <string name="user_name_value">Default User Name</string>
-    <string name="user_old_password_hint"><font size="15"> Old Password</font></string>
+    <string name="user_old_password_hint"><font size="15">Old Password</font></string>
     <string name="user_new_password_hint"><font size="15">New Password</font></string>
     <string name="user_confirm_password_hint"><font size="15">Confirm Password</font></string>
 
     <string name="change_password_button_txt">Change Password</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

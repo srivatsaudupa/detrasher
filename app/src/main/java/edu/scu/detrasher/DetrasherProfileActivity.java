@@ -9,14 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import static android.R.id.toggle;
 
 public class DetrasherProfileActivity extends AppCompatActivity {
 
@@ -34,11 +28,6 @@ public class DetrasherProfileActivity extends AppCompatActivity {
         final TextView userNameView = (TextView)this.findViewById(R.id.username_content);
         final TextView userFullnameView = (TextView)this.findViewById(R.id.userfullname_content);
         final TextView userRoleView = (TextView)this.findViewById(R.id.userrole_content);
-
-        /* Change Password EditText boxes */
-        final EditText oldPasswordET = (EditText)this.findViewById(R.id.userOldPassword);
-        final EditText newPasswordET = (EditText)this.findViewById(R.id.userNewPassword);
-        final EditText cnfPasswordET = (EditText)this.findViewById(R.id.userCnfPassword);
 
         /* fetch User Data */
         Intent thisIntent = getIntent();
@@ -93,7 +82,17 @@ public class DetrasherProfileActivity extends AppCompatActivity {
 
             case R.id.home:
                 // If home selected
-                Intent homeIntent = new Intent(DetrasherProfileActivity.this, DetrasherProfileActivity.class);
+                Intent thisIntent = getIntent();
+                int role = thisIntent.getIntExtra("userRole",0);
+                Intent homeIntent;
+                if(role == 1) {
+                    homeIntent = new Intent(DetrasherProfileActivity.this, DetrasherMainActivity.class);
+                }
+                else {
+                    homeIntent = new Intent(DetrasherProfileActivity.this, DetrasherStaffActivity.class);
+                }
+                homeIntent.putExtra("userId", thisIntent.getIntExtra("userId",0));
+                homeIntent.putExtra("userRole", role);
                 startActivity(homeIntent);
                 return true;
 
@@ -118,17 +117,5 @@ public class DetrasherProfileActivity extends AppCompatActivity {
     {
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
         return  dbHandler.updateUserData(user);
-    }
-
-    /* Method to toggle view */
-    public void toggleView(boolean toggle)
-    {
-        View parentView = (View)this.findViewById(R.id.parent_layout);
-        int layout = toggle ? R.id.profile_main : R.id.profile_chg_pwd;
-        ViewGroup parent = (ViewGroup) parentView.getParent();
-        int index =  parent.indexOfChild(parentView);
-        parent.removeView(parentView);
-        parentView = getLayoutInflater().inflate(layout, parent, false);
-        parent.addView(parentView, index);
     }
 }

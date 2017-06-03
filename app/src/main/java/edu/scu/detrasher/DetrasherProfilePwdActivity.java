@@ -9,10 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class DetrasherProfilePwdActivity extends AppCompatActivity {
@@ -118,7 +116,17 @@ public class DetrasherProfilePwdActivity extends AppCompatActivity {
 
             case R.id.home:
                 // If home selected
-                Intent homeIntent = new Intent(DetrasherProfilePwdActivity.this, DetrasherProfilePwdActivity.class);
+                Intent thisIntent = getIntent();
+                int role = thisIntent.getIntExtra("userRole",0);
+                Intent homeIntent;
+                if(role == 1) {
+                     homeIntent = new Intent(DetrasherProfilePwdActivity.this, DetrasherMainActivity.class);
+                }
+                else {
+                     homeIntent = new Intent(DetrasherProfilePwdActivity.this, DetrasherStaffActivity.class);
+                }
+                homeIntent.putExtra("userId", thisIntent.getIntExtra("userId",0));
+                homeIntent.putExtra("userRole", role);
                 startActivity(homeIntent);
                 return true;
 
@@ -143,17 +151,5 @@ public class DetrasherProfilePwdActivity extends AppCompatActivity {
     {
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
         return  dbHandler.updateUserData(user);
-    }
-
-    /* Method to toggle view */
-    public void toggleView(boolean toggle)
-    {
-        View parentView = (View)this.findViewById(R.id.parent_layout);
-        int layout = toggle ? R.id.profile_main : R.id.profile_chg_pwd;
-        ViewGroup parent = (ViewGroup) parentView.getParent();
-        int index =  parent.indexOfChild(parentView);
-        parent.removeView(parentView);
-        parentView = getLayoutInflater().inflate(layout, parent, false);
-        parent.addView(parentView, index);
     }
 }
