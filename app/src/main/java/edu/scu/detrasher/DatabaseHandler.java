@@ -59,6 +59,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(sqlStatement_user);
         db.execSQL(sqlStatement_roles);
         db.execSQL(sqlStatement_location);
+        db.execSQL(sqlStatement_task);
     }
 
     @Override
@@ -77,6 +78,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     {
         User user1 = new User(1, "jack", "Jack Smith", "jack", 1);
         User user2 = new User(2, "john", "John Doe", "john", 2);
+        User user3 = new User(3, "jane", "Jane Mars", "jane", 2);
+        User user4 = new User(4, "charles", "Charles Martin", "charles", 1);
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues user_values = new ContentValues();
@@ -94,6 +97,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         user_values.put(USER_FULLNAME, user2.get_user_full_name());
         user_values.put(USER_PASSWORD, user2.get_user_password());
         user_values.put(USER_ROLE_NO, user2.get_user_role_no());
+
+        /* Insert data to table */
+        db.insert(TABLE_USERS, null, user_values);
+
+        user_values.put(USER_ID, user3.get_user_id());
+        user_values.put(USER_NAME, user3.get_user_name());
+        user_values.put(USER_FULLNAME, user3.get_user_full_name());
+        user_values.put(USER_PASSWORD, user3.get_user_password());
+        user_values.put(USER_ROLE_NO, user3.get_user_role_no());
+
+        /* Insert data to table */
+        db.insert(TABLE_USERS, null, user_values);
+
+        user_values.put(USER_ID, user4.get_user_id());
+        user_values.put(USER_NAME, user4.get_user_name());
+        user_values.put(USER_FULLNAME, user4.get_user_full_name());
+        user_values.put(USER_PASSWORD, user4.get_user_password());
+        user_values.put(USER_ROLE_NO, user4.get_user_role_no());
 
         /* Insert data to table */
         db.insert(TABLE_USERS, null, user_values);
@@ -252,5 +273,128 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         userRoleCursor.moveToFirst();
         user.set_user_role_descr(userRoleCursor.getString(0));
         return user;
+    }
+
+    public ArrayList<Task> fetchTaskData(int userId, int userRole)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Task> retObj = new ArrayList<Task>();
+        String query = "";
+        if(userRole == 1)
+        {
+            /* Create a cursor to read data */
+            query = "SELECT T."+TASK_ID+", L."+LOCATION_ID+", L."+LOCATION_NAME+", L."+LOCATION_FLOOR+", L."+LOCATION_TRASH_ID+", L."+LOCATION_TRASH_LEVEL+", S."+USER_FULLNAME+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T INNER JOIN "+TABLE_LOCATION+" L ON T."+LOCATION_ID+" = L."+LOCATION_ID+" INNER JOIN "+TABLE_USERS+" S ON S."+USER_ID+" = T."+USER_ID;
+        }
+        else
+        {
+            query = "SELECT T."+TASK_ID+", L."+LOCATION_ID+", L."+LOCATION_NAME+", L."+LOCATION_FLOOR+", L."+LOCATION_TRASH_ID+", L."+LOCATION_TRASH_LEVEL+", S."+USER_FULLNAME+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T INNER JOIN "+TABLE_LOCATION+" L ON T."+LOCATION_ID+" = L."+LOCATION_ID+" INNER JOIN "+TABLE_USERS+" S ON S."+USER_ID+" = T."+USER_ID+" WHERE T."+USER_ID+" = "+userId;
+        }
+        Cursor taskCursor = db.rawQuery(query, null);
+        try {
+            if (taskCursor == null)
+                return null;
+            if(taskCursor.moveToFirst()) {
+                while (taskCursor.moveToNext()) {
+                    Task taskData = new Task();
+                    taskData.set_task_id(Integer.parseInt(taskCursor.getString(0)));
+                    taskData.set_task_location_id(Integer.parseInt(taskCursor.getString(1)));
+                    taskData.set_task_location_desc(taskCursor.getString(2) + " - L" +taskCursor.getString(3) + " - Trash No. " +taskCursor.getString(4) );
+                    taskData.set_task_staff_name(taskCursor.getString(6));
+                    taskData.set_task_completion_status(Integer.parseInt(taskCursor.getString(7)));
+                    retObj.add(taskData);
+                }
+            }
+        }
+        finally {
+            taskCursor.close();
+        }
+        return retObj;
+    }
+
+    public ArrayList<Task> fetchAssignedTaskData(int userId, int userRole)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Task> retObj = new ArrayList<Task>();
+        String query = "";
+        if(userRole == 1)
+        {
+            /* Create a cursor to read data */
+            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T";
+        }
+        else
+        {
+            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T WHERE T."+USER_ID+" = "+userId;
+        }
+        Cursor taskCursor = db.rawQuery(query, null);
+        try {
+            if (taskCursor == null)
+                return null;
+            if(taskCursor.moveToFirst()) {
+                do {
+                    Task taskData = new Task();
+                    taskData.set_task_id(Integer.parseInt(taskCursor.getString(0)));
+                    taskData.set_task_location_id(Integer.parseInt(taskCursor.getString(1)));
+                    Cursor locDetails = db.query(TABLE_LOCATION, new String[]{LOCATION_NAME, LOCATION_FLOOR, LOCATION_TRASH_ID}, LOCATION_ID+"=?", new String[]{taskData.get_task_location_id()+""}, null, null, null, null);
+                    locDetails.moveToFirst();
+                    taskData.set_task_location_desc(locDetails.getString(0) + " - L" +locDetails.getString(1) + " - Trash No. " +locDetails.getString(2) );
+                    locDetails.close();
+                    taskData.set_task_user_id(Integer.parseInt(taskCursor.getString(2)));
+                    Cursor userDetails = db.query(TABLE_USERS, new String[]{USER_FULLNAME}, USER_ID+"=?", new String[]{taskData.get_task_user_id()+""}, null, null, null, null);
+                    userDetails.moveToFirst();
+                    taskData.set_task_staff_name(userDetails.getString(0));
+                    userDetails.close();
+                    taskData.set_task_completion_status(Integer.parseInt(taskCursor.getString(3)));
+                    retObj.add(taskData);
+                }while (taskCursor.moveToNext());
+            }
+        }
+        finally {
+            taskCursor.close();
+        }
+        return retObj;
+    }
+
+    /* Create task */
+    public void createTask()
+    {
+        this.createLocations();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Task task1 = new Task(1, 2, 2, 2);
+        Task task2 = new Task(2, 3, 2, 1);
+        Task task3 = new Task(3, 4, 3, 1);
+        Task task4 = new Task(4, 1, 2, 2);
+        Task task5 = new Task(5, 6, 2, 2);
+        Task task6 = new Task(6, 5, 3, 2);
+
+        ContentValues taskVals = new ContentValues();
+        taskVals.put(TASK_ID, task1.get_task_id());
+        taskVals.put(LOCATION_ID, task1.get_task_location_id());
+        taskVals.put(USER_ID, task1.get_task_user_id());
+        taskVals.put(TASK_STATUS, task1.get_task_completion_status());
+
+        db.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task2.get_task_id());
+        taskVals.put(LOCATION_ID, task2.get_task_location_id());
+        taskVals.put(USER_ID, task2.get_task_user_id());
+        taskVals.put(TASK_STATUS, task2.get_task_completion_status());
+
+        db.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task3.get_task_id());
+        taskVals.put(LOCATION_ID, task3.get_task_location_id());
+        taskVals.put(USER_ID, task3.get_task_user_id());
+        taskVals.put(TASK_STATUS, task3.get_task_completion_status());
+
+        db.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task4.get_task_id());
+        taskVals.put(LOCATION_ID, task4.get_task_location_id());
+        taskVals.put(USER_ID, task4.get_task_user_id());
+        taskVals.put(TASK_STATUS, task4.get_task_completion_status());
+
+        db.insert(TABLE_TASKS, null, taskVals);
+
+        db.close();
     }
 }

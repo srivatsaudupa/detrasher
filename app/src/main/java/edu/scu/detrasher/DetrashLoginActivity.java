@@ -68,6 +68,7 @@ public class DetrashLoginActivity extends AppCompatActivity {
         User user_data = new User(0, userID, "", userPassword, 0);
         DatabaseHandler dbConnector = new DatabaseHandler(getApplicationContext());
         dbConnector.createUsers();
+        dbConnector.createTask();
         return dbConnector.AuthenticationController(user_data);
     }
 }

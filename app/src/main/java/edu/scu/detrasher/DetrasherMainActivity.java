@@ -1,5 +1,6 @@
 package edu.scu.detrasher;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,11 @@ public class DetrasherMainActivity extends AppCompatActivity {
         Toolbar appToolBar = (Toolbar) findViewById(R.id.detrasher_toolbar);
         setSupportActionBar(appToolBar);
         appToolBar.setTitleTextColor(0xFFFFFFFF);
+
+        /* Session data */
+        Intent thisIntent = getIntent();
+        final int userId = thisIntent.getIntExtra("userId", 0);
+        final int userRole = thisIntent.getIntExtra("userRole", 0);
         /* Trash can Icon */
         ImageView trashManager = (ImageView) findViewById(R.id.trashManager);
 
@@ -52,7 +58,10 @@ public class DetrasherMainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Task Manager", Toast.LENGTH_SHORT).show();
+                Intent taskIntent = new Intent(DetrasherMainActivity.this, DetrasherTaskActivity.class);
+                taskIntent.putExtra("userId", userId);
+                taskIntent.putExtra("userRole", userRole);
+                startActivity(taskIntent);
             }
         });
 
@@ -61,7 +70,10 @@ public class DetrasherMainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+                Intent settingsIntent = new Intent(DetrasherMainActivity.this, DetrasherProfileActivity.class);
+                settingsIntent.putExtra("userId", userId);
+                settingsIntent.putExtra("userRole", userRole);
+                startActivity(settingsIntent);
             }
         });
     }
