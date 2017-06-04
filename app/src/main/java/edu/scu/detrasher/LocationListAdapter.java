@@ -1,7 +1,7 @@
 package edu.scu.detrasher;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,14 +42,15 @@ public class LocationListAdapter extends ArrayAdapter<Location> implements View.
         if(this.userRole == 1) {
             int position = (Integer) v.getTag();
             Object object = getItem(position);
-            Task taskObj = (Task) object;
+            Location locObj = (Location) object;
 
-            switch (v.getId()) {
-                case R.id.icon_progress:
-                    Snackbar.make(v, "Release date " + taskObj.get_task_completion_status(), Snackbar.LENGTH_LONG)
-                            .setAction("No action", null).show();
-                    break;
-            }
+            Intent taskAssign = new Intent(this.mContext, DetrasherTrashManagerActivity.class);
+            taskAssign.putExtra("loc_descr", locObj.get_location_name()+" L"+locObj.get_location_floor());
+            taskAssign.putExtra("trash_id", locObj.get_location_trash_id());
+            taskAssign.putExtra("trash_level", locObj.get_location_trash_level());
+            taskAssign.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.mContext.startActivity(taskAssign);
+
         }
     }
 
@@ -100,6 +101,7 @@ public class LocationListAdapter extends ArrayAdapter<Location> implements View.
         {
             viewHolder.statusIcon.setImageResource(R.drawable.trash_level_low);
         }
+        viewHolder.statusIcon.setTag(position);
         viewHolder.statusIcon.setOnClickListener(this);
         // Return the completed view to render on screen
         return convertView;

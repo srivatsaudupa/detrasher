@@ -57,6 +57,7 @@ public class DetrasherTrashActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent logout = new Intent(DetrasherTrashActivity.this, DetrashLoginActivity.class);
+                                logout.putExtra("userId", 1);
                                 startActivity(logout);
                                 finish();
                             }

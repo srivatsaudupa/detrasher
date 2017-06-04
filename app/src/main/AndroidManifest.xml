@@ -44,6 +44,10 @@
         <activity
             android:name=".DetrasherTrashActivity"
             android:label="@string/trash_manager_header" />
+
+        <activity
+            android:name=".DetrasherTrashManagerActivity"
+            android:label="@string/trash_task_assign_header" />
     </application>
 
 </manifest>

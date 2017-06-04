@@ -106,6 +106,7 @@ public class DetrasherProfilePwdActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent logout = new Intent(DetrasherProfilePwdActivity.this, DetrashLoginActivity.class);
+                                logout.putExtra("userId", 1);
                                 startActivity(logout);
                                 finish();
                             }

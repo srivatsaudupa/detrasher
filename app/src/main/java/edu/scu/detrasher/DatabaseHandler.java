@@ -52,14 +52,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         /* Create user table */
         /* Contains User ID, Full Name and Role value */
-        String sqlStatement_user = "CREATE TABLE "+TABLE_USERS+" ("+USER_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+USER_NAME+" TEXT, "+USER_FULLNAME+" TEXT, "+USER_PASSWORD+" TEXT,"+USER_ROLE_NO+" INTEGER)";
-        String sqlStatement_roles = "CREATE TABLE "+TABLE_ROLES+" ("+USER_ROLE_NO+" INTEGER PRIMARY KEY AUTOINCREMENT, "+USER_ROLE_DESCR+" TEXT)";
-        String sqlStatement_location = "CREATE TABLE "+TABLE_LOCATION+" ("+LOCATION_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ LOCATION_NAME+" TEXT, "+ LOCATION_FLOOR +" INTEGER, "+LOCATION_TRASH_ID+" INTEGER, "+LOCATION_TRASH_LEVEL+" INTEGER)";
-        String sqlStatement_task = "CREATE TABLE "+TABLE_TASKS+" ("+TASK_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ LOCATION_ID+" INTEGER, "+ USER_ID +" INTEGER, "+TASK_STATUS+" TEXT)";
+        String sqlStatement_user = "CREATE TABLE "+TABLE_USERS+" ("+USER_ID+" INTEGER PRIMARY KEY, "+USER_NAME+" TEXT, "+USER_FULLNAME+" TEXT, "+USER_PASSWORD+" TEXT,"+USER_ROLE_NO+" INTEGER)";
+        String sqlStatement_roles = "CREATE TABLE "+TABLE_ROLES+" ("+USER_ROLE_NO+" INTEGER PRIMARY KEY, "+USER_ROLE_DESCR+" TEXT)";
+        String sqlStatement_location = "CREATE TABLE "+TABLE_LOCATION+" ("+LOCATION_ID+" INTEGER PRIMARY KEY, "+ LOCATION_NAME+" TEXT, "+ LOCATION_FLOOR +" INTEGER, "+LOCATION_TRASH_ID+" INTEGER, "+LOCATION_TRASH_LEVEL+" INTEGER)";
+        String sqlStatement_task = "CREATE TABLE "+TABLE_TASKS+" ("+TASK_ID+" INTEGER PRIMARY KEY, "+ LOCATION_ID+" INTEGER, "+ USER_ID +" INTEGER, "+TASK_STATUS+" TEXT)";
         db.execSQL(sqlStatement_user);
         db.execSQL(sqlStatement_roles);
         db.execSQL(sqlStatement_location);
         db.execSQL(sqlStatement_task);
+
     }
 
     @Override
@@ -80,7 +81,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         User user2 = new User(2, "john", "John Doe", "john", 2);
         User user3 = new User(3, "jane", "Jane Mars", "jane", 2);
         User user4 = new User(4, "charles", "Charles Martin", "charles", 1);
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db_user = this.getWritableDatabase();
 
         ContentValues user_values = new ContentValues();
         user_values.put(USER_ID, user1.get_user_id());
@@ -90,7 +91,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         user_values.put(USER_ROLE_NO, user1.get_user_role_no());
 
         /* Insert data to table */
-        db.insert(TABLE_USERS, null, user_values);
+        db_user.insert(TABLE_USERS, null, user_values);
 
         user_values.put(USER_ID, user2.get_user_id());
         user_values.put(USER_NAME, user2.get_user_name());
@@ -99,7 +100,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         user_values.put(USER_ROLE_NO, user2.get_user_role_no());
 
         /* Insert data to table */
-        db.insert(TABLE_USERS, null, user_values);
+        db_user.insert(TABLE_USERS, null, user_values);
 
         user_values.put(USER_ID, user3.get_user_id());
         user_values.put(USER_NAME, user3.get_user_name());
@@ -108,7 +109,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         user_values.put(USER_ROLE_NO, user3.get_user_role_no());
 
         /* Insert data to table */
-        db.insert(TABLE_USERS, null, user_values);
+        db_user.insert(TABLE_USERS, null, user_values);
 
         user_values.put(USER_ID, user4.get_user_id());
         user_values.put(USER_NAME, user4.get_user_name());
@@ -117,10 +118,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         user_values.put(USER_ROLE_NO, user4.get_user_role_no());
 
         /* Insert data to table */
-        db.insert(TABLE_USERS, null, user_values);
+        db_user.insert(TABLE_USERS, null, user_values);
 
-        /* Close Database */
-        db.close();
+        db_user.close();
 
         /* Create Roles */
         this.createRoles();
@@ -128,22 +128,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /* 2. Create Role Data */
     public void createRoles()
     {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db_roles = this.getWritableDatabase();
 
         ContentValues role_values = new ContentValues();
         role_values.put(USER_ROLE_NO, 1);
         role_values.put(USER_ROLE_DESCR, "Manager");
 
         /* Insert Data to table */
-        db.insert(TABLE_ROLES, null, role_values);
+        db_roles.insert(TABLE_ROLES, null, role_values);
 
         role_values.put(USER_ROLE_NO, 2);
         role_values.put(USER_ROLE_DESCR, "Staff");
 
         /* Insert Data to table */
-        db.insert(TABLE_ROLES, null, role_values);
+        db_roles.insert(TABLE_ROLES, null, role_values);
 
-        db.close();
+        db_roles.close();
+
     }
 
     /* 3. User Authenticate */
@@ -176,32 +177,90 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /* 4. Create Location data */
     public void createLocations()
     {
-        Location loc1 = new Location("Learning Commons", 1, 1, 25);
+        Location loc1 = new Location("Learning Commons", 1, 1, 6);
         this.dbLocInsert(loc1);
-        Location loc2 = new Location("Learning Commons", 1, 2, 15);
+        Location loc2 = new Location("Learning Commons", 1, 2, 10);
         this.dbLocInsert(loc2);
-        Location loc3 = new Location("Learning Commons", 2, 1, 6);
+        Location loc3 = new Location("Learning Commons", 2, 1, 15);
         this.dbLocInsert(loc3);
-        Location loc4 = new Location("Engineering", 3, 1, 15);
+        Location loc4 = new Location("Engineering", 3, 1, 21);
         this.dbLocInsert(loc4);
-        Location loc5 = new Location("Engineering", 3, 2, 30);
+        Location loc5 = new Location("Engineering", 3, 2, 25);
         this.dbLocInsert(loc5);
-        Location loc6 = new Location("Engineering", 2, 1, 22);
+        Location loc6 = new Location("Engineering", 2, 1, 30);
         this.dbLocInsert(loc6);
     }
     /* DB Location insert method */
     public void dbLocInsert(Location location)
     {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db_loc = this.getWritableDatabase();
         ContentValues locValues = new ContentValues();
         locValues.put(LOCATION_NAME, location.get_location_name());
         locValues.put(LOCATION_FLOOR, location.get_location_floor());
         locValues.put(LOCATION_TRASH_ID, location.get_location_trash_id());
         locValues.put(LOCATION_TRASH_LEVEL, location.get_location_trash_level());
-        db.insert(TABLE_LOCATION, null, locValues);
-        db.close();
+        db_loc.insert(TABLE_LOCATION, null, locValues);
+        db_loc.close();
+    }
+    /* Create task */
+    public void createTask()
+    {
+        this.createLocations();
+        SQLiteDatabase db_task = this.getWritableDatabase();
+        Task task1 = new Task(1, 2, 2, 2);
+        Task task2 = new Task(2, 3, 2, 1);
+        Task task3 = new Task(3, 4, 3, 1);
+        Task task4 = new Task(4, 1, 2, 2);
+        Task task5 = new Task(5, 6, 2, 2);
+        Task task6 = new Task(6, 5, 3, 2);
+
+        ContentValues taskVals = new ContentValues();
+        taskVals.put(TASK_ID, task1.get_task_id());
+        taskVals.put(LOCATION_ID, task1.get_task_location_id());
+        taskVals.put(USER_ID, task1.get_task_user_id());
+        taskVals.put(TASK_STATUS, task1.get_task_completion_status());
+
+        db_task.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task2.get_task_id());
+        taskVals.put(LOCATION_ID, task2.get_task_location_id());
+        taskVals.put(USER_ID, task2.get_task_user_id());
+        taskVals.put(TASK_STATUS, task2.get_task_completion_status());
+
+        db_task.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task3.get_task_id());
+        taskVals.put(LOCATION_ID, task3.get_task_location_id());
+        taskVals.put(USER_ID, task3.get_task_user_id());
+        taskVals.put(TASK_STATUS, task3.get_task_completion_status());
+
+        db_task.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task4.get_task_id());
+        taskVals.put(LOCATION_ID, task4.get_task_location_id());
+        taskVals.put(USER_ID, task4.get_task_user_id());
+        taskVals.put(TASK_STATUS, task4.get_task_completion_status());
+
+        db_task.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task5.get_task_id());
+        taskVals.put(LOCATION_ID, task5.get_task_location_id());
+        taskVals.put(USER_ID, task5.get_task_user_id());
+        taskVals.put(TASK_STATUS, task5.get_task_completion_status());
+
+        db_task.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task6.get_task_id());
+        taskVals.put(LOCATION_ID, task6.get_task_location_id());
+        taskVals.put(USER_ID, task6.get_task_user_id());
+        taskVals.put(TASK_STATUS, task6.get_task_completion_status());
+
+        db_task.insert(TABLE_TASKS, null, taskVals);
+
+        db_task.close();
     }
 
+    /************************** Data Manipulations *************************/
     /* Method to populate location data */
     public ArrayList<Location> populateLocationData()
     {
@@ -318,63 +377,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             taskCursor.close();
         }
         return retObj;
-    }
-
-    /* Create task */
-    public void createTask()
-    {
-        this.createLocations();
-        SQLiteDatabase db = this.getWritableDatabase();
-        Task task1 = new Task(1, 2, 2, 2);
-        Task task2 = new Task(2, 3, 2, 1);
-        Task task3 = new Task(3, 4, 3, 1);
-        Task task4 = new Task(4, 1, 2, 2);
-        Task task5 = new Task(5, 6, 2, 2);
-        Task task6 = new Task(6, 5, 3, 2);
-
-        ContentValues taskVals = new ContentValues();
-        taskVals.put(TASK_ID, task1.get_task_id());
-        taskVals.put(LOCATION_ID, task1.get_task_location_id());
-        taskVals.put(USER_ID, task1.get_task_user_id());
-        taskVals.put(TASK_STATUS, task1.get_task_completion_status());
-
-        db.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task2.get_task_id());
-        taskVals.put(LOCATION_ID, task2.get_task_location_id());
-        taskVals.put(USER_ID, task2.get_task_user_id());
-        taskVals.put(TASK_STATUS, task2.get_task_completion_status());
-
-        db.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task3.get_task_id());
-        taskVals.put(LOCATION_ID, task3.get_task_location_id());
-        taskVals.put(USER_ID, task3.get_task_user_id());
-        taskVals.put(TASK_STATUS, task3.get_task_completion_status());
-
-        db.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task4.get_task_id());
-        taskVals.put(LOCATION_ID, task4.get_task_location_id());
-        taskVals.put(USER_ID, task4.get_task_user_id());
-        taskVals.put(TASK_STATUS, task4.get_task_completion_status());
-
-        db.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task5.get_task_id());
-        taskVals.put(LOCATION_ID, task5.get_task_location_id());
-        taskVals.put(USER_ID, task5.get_task_user_id());
-        taskVals.put(TASK_STATUS, task5.get_task_completion_status());
-
-        db.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task6.get_task_id());
-        taskVals.put(LOCATION_ID, task6.get_task_location_id());
-        taskVals.put(USER_ID, task6.get_task_user_id());
-        taskVals.put(TASK_STATUS, task6.get_task_completion_status());
-
-        db.insert(TABLE_TASKS, null, taskVals);
-
-        db.close();
     }
 }
