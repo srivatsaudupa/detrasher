@@ -178,15 +178,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     {
         Location loc1 = new Location("Learning Commons", 1, 1, 25);
         this.dbLocInsert(loc1);
-        Location loc2 = new Location("Learning Commons", 1, 2, 46);
+        Location loc2 = new Location("Learning Commons", 1, 2, 15);
         this.dbLocInsert(loc2);
         Location loc3 = new Location("Learning Commons", 2, 1, 6);
         this.dbLocInsert(loc3);
         Location loc4 = new Location("Engineering", 3, 1, 15);
         this.dbLocInsert(loc4);
-        Location loc5 = new Location("Engineering", 3, 2, 40);
+        Location loc5 = new Location("Engineering", 3, 2, 30);
         this.dbLocInsert(loc5);
-        Location loc6 = new Location("Engineering", 2, 1, 46);
+        Location loc6 = new Location("Engineering", 2, 1, 22);
         this.dbLocInsert(loc6);
     }
     /* DB Location insert method */
@@ -213,7 +213,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             if (locationCursor == null)
                 return null;
             locationCursor.moveToFirst();
-            while (locationCursor.moveToNext()) {
+            do {
                 Location locData = new Location();
                 locData.set_location_id(Integer.parseInt(locationCursor.getString(0)));
                 locData.set_location_name(locationCursor.getString(1));
@@ -221,7 +221,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 locData.set_location_trash_id(Integer.parseInt(locationCursor.getString(3)));
                 locData.set_location_trash_level(Integer.parseInt(locationCursor.getString(4)));
                 locationData.add(locData);
-            }
+            }while (locationCursor.moveToNext());
         }
         finally {
             locationCursor.close();
@@ -275,55 +275,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return user;
     }
 
-    public ArrayList<Task> fetchTaskData(int userId, int userRole)
-    {
-        SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<Task> retObj = new ArrayList<Task>();
-        String query = "";
-        if(userRole == 1)
-        {
-            /* Create a cursor to read data */
-            query = "SELECT T."+TASK_ID+", L."+LOCATION_ID+", L."+LOCATION_NAME+", L."+LOCATION_FLOOR+", L."+LOCATION_TRASH_ID+", L."+LOCATION_TRASH_LEVEL+", S."+USER_FULLNAME+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T INNER JOIN "+TABLE_LOCATION+" L ON T."+LOCATION_ID+" = L."+LOCATION_ID+" INNER JOIN "+TABLE_USERS+" S ON S."+USER_ID+" = T."+USER_ID;
-        }
-        else
-        {
-            query = "SELECT T."+TASK_ID+", L."+LOCATION_ID+", L."+LOCATION_NAME+", L."+LOCATION_FLOOR+", L."+LOCATION_TRASH_ID+", L."+LOCATION_TRASH_LEVEL+", S."+USER_FULLNAME+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T INNER JOIN "+TABLE_LOCATION+" L ON T."+LOCATION_ID+" = L."+LOCATION_ID+" INNER JOIN "+TABLE_USERS+" S ON S."+USER_ID+" = T."+USER_ID+" WHERE T."+USER_ID+" = "+userId;
-        }
-        Cursor taskCursor = db.rawQuery(query, null);
-        try {
-            if (taskCursor == null)
-                return null;
-            if(taskCursor.moveToFirst()) {
-                while (taskCursor.moveToNext()) {
-                    Task taskData = new Task();
-                    taskData.set_task_id(Integer.parseInt(taskCursor.getString(0)));
-                    taskData.set_task_location_id(Integer.parseInt(taskCursor.getString(1)));
-                    taskData.set_task_location_desc(taskCursor.getString(2) + " - L" +taskCursor.getString(3) + " - Trash No. " +taskCursor.getString(4) );
-                    taskData.set_task_staff_name(taskCursor.getString(6));
-                    taskData.set_task_completion_status(Integer.parseInt(taskCursor.getString(7)));
-                    retObj.add(taskData);
-                }
-            }
-        }
-        finally {
-            taskCursor.close();
-        }
-        return retObj;
-    }
-
     public ArrayList<Task> fetchAssignedTaskData(int userId, int userRole)
     {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Task> retObj = new ArrayList<Task>();
-        String query = "";
+        String query = "", countQuery ="";
         if(userRole == 1)
         {
             /* Create a cursor to read data */
-            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T";
+            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T ORDER BY T."+TASK_STATUS+", T."+LOCATION_ID;
+            countQuery = "SELECT Count(T."+TASK_ID+") FROM "+TABLE_TASKS+" T";
         }
         else
         {
-            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T WHERE T."+USER_ID+" = "+userId;
+            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T WHERE T."+USER_ID+" = "+userId+" ORDER BY T."+TASK_STATUS+", T."+LOCATION_ID;
+            countQuery = "SELECT Count(T."+TASK_ID+") FROM "+TABLE_TASKS+" T WHERE T."+USER_ID+" = "+userId;
         }
         Cursor taskCursor = db.rawQuery(query, null);
         try {
@@ -392,6 +358,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         taskVals.put(LOCATION_ID, task4.get_task_location_id());
         taskVals.put(USER_ID, task4.get_task_user_id());
         taskVals.put(TASK_STATUS, task4.get_task_completion_status());
+
+        db.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task5.get_task_id());
+        taskVals.put(LOCATION_ID, task5.get_task_location_id());
+        taskVals.put(USER_ID, task5.get_task_user_id());
+        taskVals.put(TASK_STATUS, task5.get_task_completion_status());
+
+        db.insert(TABLE_TASKS, null, taskVals);
+
+        taskVals.put(TASK_ID, task6.get_task_id());
+        taskVals.put(LOCATION_ID, task6.get_task_location_id());
+        taskVals.put(USER_ID, task6.get_task_user_id());
+        taskVals.put(TASK_STATUS, task6.get_task_completion_status());
 
         db.insert(TABLE_TASKS, null, taskVals);
 

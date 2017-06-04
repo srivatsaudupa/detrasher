@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:screenOrientation = "portrait"
     android:background="@color/pureWhite"
-    tools:context="edu.scu.detrasher.DetrasherTaskActivity">
+    tools:context="edu.scu.detrasher.DetrasherTrashActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/detrasher_toolbar"
@@ -57,7 +57,7 @@
                     android:layout_marginRight="5dp"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
                     <ListView
-                        android:id="@+id/taskList"
+                        android:id="@+id/locList"
                         android:layout_width="wrap_content"
                         android:layout_height="437dp"
                         />

@@ -8,7 +8,8 @@
     <string name="staff_page_header">Staff Self Service</string>
     <string name="profile_page_header">Manage your Profile</string>
     <string name="profile_password_page_header">Change your password</string>
-    <string name="task_assign_header">Tasks</string>
+    <string name="task_assign_header">Assigned Tasks</string>
+    <string name="trash_manager_header">Trash Level Manager</string>
 
     <string name="username_label">User Name</string>
     <string name="userfullname_label">Full Name</string>
