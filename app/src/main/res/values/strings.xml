@@ -11,6 +11,7 @@
     <string name="task_assign_header">Assigned Tasks</string>
     <string name="trash_manager_header">Trash Level Manager</string>
     <string name="trash_task_assign_header">Manage Trash</string>
+    <string name="trash_task_complete_header">Worklist Item</string>
 
     <string name="username_label">User Name</string>
     <string name="userfullname_label">Full Name</string>
@@ -23,6 +24,10 @@
     <string name="trash_id_label">Trash Can No. </string>
     <string name="trash_level_label">Current Trash Level</string>
 
+    <string name="task_loc_label">Location</string>
+    <string name="task_assigned_to_label">Assigned to</string>
+    <string name="task_trash_level_label">Current Trash Level</string>
+
     <string name="user_name_value">Default User Name</string>
     <string name="user_old_password_hint"><font size="15">Old Password</font></string>
     <string name="user_new_password_hint"><font size="15">New Password</font></string>
@@ -30,5 +35,6 @@
 
     <string name="change_password_button_txt">Change Password</string>
     <string name="assign_task_button_txt">Assign Task</string>
+    <string name="complete_task_button_txt">Mark Task Complete</string>
     <string name="title_activity_maps">Map</string>
 </resources>

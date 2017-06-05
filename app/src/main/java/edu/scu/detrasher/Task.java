@@ -12,17 +12,20 @@ public class Task {
     int _task_user_id;
     String _task_staff_name;
     int _task_completion_status;
+    int _task_trash_level;
+
     /* Constructors */
     public Task()
     {
         /* Default constructor */
     }
-    public Task(int task_id, int task_location_id, int task_user_id, int task_completion_status)
+    public Task(int task_id, int task_location_id, int task_user_id, int task_completion_status, int task_trash_level)
     {
         this._task_id = task_id;
         this._task_location_id = task_location_id;
         this._task_user_id = task_user_id;
         this._task_completion_status = task_completion_status;
+        this._task_trash_level = task_trash_level;
     }
     /* Get and set Method */
     public int get_task_id()
@@ -42,6 +45,10 @@ public class Task {
     public int get_task_completion_status()
     {
         return this._task_completion_status;
+    }
+    public int get_task_trash_level()
+    {
+        return this._task_trash_level;
     }
     /* Set Methods */
     public void set_task_id(int value)
@@ -67,5 +74,9 @@ public class Task {
     public void set_task_completion_status(int value)
     {
         this._task_completion_status = value;
+    }
+    public void set_task_trash_level(int value)
+    {
+        this._task_trash_level = value;
     }
 }

@@ -18,6 +18,7 @@ public class DetrasherTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detrasher_task_view);
+
         /* Tool bar handler */
         Toolbar appToolBar = (Toolbar) findViewById(R.id.detrasher_toolbar);
         setSupportActionBar(appToolBar);
@@ -80,6 +81,7 @@ public class DetrasherTaskActivity extends AppCompatActivity {
                 homeIntent.putExtra("userId", thisIntent.getIntExtra("userId",0));
                 homeIntent.putExtra("userRole", role);
                 startActivity(homeIntent);
+                finish();
                 return true;
 
             default:
@@ -95,5 +97,22 @@ public class DetrasherTaskActivity extends AppCompatActivity {
     {
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
         return dbHandler.fetchAssignedTaskData(userId, userRole);
+    }
+
+    @Override
+    public void onBackPressed() {
+        int role = getIntent().getIntExtra("userRole", 0);
+        Intent taskIntent;
+        if(role==1)
+        {
+             taskIntent = new Intent(this, DetrasherMainActivity.class);
+        }
+        else {
+             taskIntent = new Intent(this, DetrasherStaffActivity.class);
+        }
+        taskIntent.putExtra("userId", getIntent().getIntExtra("userId", 0));
+        taskIntent.putExtra("userRole", role);
+        startActivity(taskIntent);
+        finish();
     }
 }

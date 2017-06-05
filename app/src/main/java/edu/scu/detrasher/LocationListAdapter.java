@@ -48,6 +48,7 @@ public class LocationListAdapter extends ArrayAdapter<Location> implements View.
             taskAssign.putExtra("loc_descr", locObj.get_location_name()+" L"+locObj.get_location_floor());
             taskAssign.putExtra("trash_id", locObj.get_location_trash_id());
             taskAssign.putExtra("trash_level", locObj.get_location_trash_level());
+            taskAssign.putExtra("userRole", 1);
             taskAssign.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.mContext.startActivity(taskAssign);
 

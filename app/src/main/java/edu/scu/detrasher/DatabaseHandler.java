@@ -55,7 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String sqlStatement_user = "CREATE TABLE "+TABLE_USERS+" ("+USER_ID+" INTEGER PRIMARY KEY, "+USER_NAME+" TEXT, "+USER_FULLNAME+" TEXT, "+USER_PASSWORD+" TEXT,"+USER_ROLE_NO+" INTEGER)";
         String sqlStatement_roles = "CREATE TABLE "+TABLE_ROLES+" ("+USER_ROLE_NO+" INTEGER PRIMARY KEY, "+USER_ROLE_DESCR+" TEXT)";
         String sqlStatement_location = "CREATE TABLE "+TABLE_LOCATION+" ("+LOCATION_ID+" INTEGER PRIMARY KEY, "+ LOCATION_NAME+" TEXT, "+ LOCATION_FLOOR +" INTEGER, "+LOCATION_TRASH_ID+" INTEGER, "+LOCATION_TRASH_LEVEL+" INTEGER)";
-        String sqlStatement_task = "CREATE TABLE "+TABLE_TASKS+" ("+TASK_ID+" INTEGER PRIMARY KEY, "+ LOCATION_ID+" INTEGER, "+ USER_ID +" INTEGER, "+TASK_STATUS+" TEXT)";
+        String sqlStatement_task = "CREATE TABLE "+TABLE_TASKS+" ("+TASK_ID+" INTEGER PRIMARY KEY, "+ LOCATION_ID+" INTEGER, "+ USER_ID +" INTEGER, "+TASK_STATUS+" TEXT, "+LOCATION_TRASH_LEVEL+" INTEGER)";
         db.execSQL(sqlStatement_user);
         db.execSQL(sqlStatement_roles);
         db.execSQL(sqlStatement_location);
@@ -207,18 +207,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     {
         this.createLocations();
         SQLiteDatabase db_task = this.getWritableDatabase();
-        Task task1 = new Task(1, 2, 2, 2);
-        Task task2 = new Task(2, 3, 2, 1);
-        Task task3 = new Task(3, 4, 3, 1);
-        Task task4 = new Task(4, 1, 2, 2);
-        Task task5 = new Task(5, 6, 2, 2);
-        Task task6 = new Task(6, 5, 3, 2);
+        Task task1 = new Task(1, 1, 2, 1, 6);
+        Task task2 = new Task(2, 2, 2, 1, 10);
+        Task task3 = new Task(3, 3, 3, 1, 15);
+        Task task4 = new Task(4, 4, 2, 2, 30);
+        Task task5 = new Task(5, 5, 2, 2, 30);
+        Task task6 = new Task(6, 6, 3, 2, 30);
 
         ContentValues taskVals = new ContentValues();
         taskVals.put(TASK_ID, task1.get_task_id());
         taskVals.put(LOCATION_ID, task1.get_task_location_id());
         taskVals.put(USER_ID, task1.get_task_user_id());
         taskVals.put(TASK_STATUS, task1.get_task_completion_status());
+        taskVals.put(LOCATION_TRASH_LEVEL, task1.get_task_trash_level());
 
         db_task.insert(TABLE_TASKS, null, taskVals);
 
@@ -226,6 +227,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         taskVals.put(LOCATION_ID, task2.get_task_location_id());
         taskVals.put(USER_ID, task2.get_task_user_id());
         taskVals.put(TASK_STATUS, task2.get_task_completion_status());
+        taskVals.put(LOCATION_TRASH_LEVEL, task2.get_task_trash_level());
 
         db_task.insert(TABLE_TASKS, null, taskVals);
 
@@ -233,6 +235,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         taskVals.put(LOCATION_ID, task3.get_task_location_id());
         taskVals.put(USER_ID, task3.get_task_user_id());
         taskVals.put(TASK_STATUS, task3.get_task_completion_status());
+        taskVals.put(LOCATION_TRASH_LEVEL, task3.get_task_trash_level());
 
         db_task.insert(TABLE_TASKS, null, taskVals);
 
@@ -240,6 +243,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         taskVals.put(LOCATION_ID, task4.get_task_location_id());
         taskVals.put(USER_ID, task4.get_task_user_id());
         taskVals.put(TASK_STATUS, task4.get_task_completion_status());
+        taskVals.put(LOCATION_TRASH_LEVEL, task4.get_task_trash_level());
 
         db_task.insert(TABLE_TASKS, null, taskVals);
 
@@ -247,6 +251,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         taskVals.put(LOCATION_ID, task5.get_task_location_id());
         taskVals.put(USER_ID, task5.get_task_user_id());
         taskVals.put(TASK_STATUS, task5.get_task_completion_status());
+        taskVals.put(LOCATION_TRASH_LEVEL, task5.get_task_trash_level());
 
         db_task.insert(TABLE_TASKS, null, taskVals);
 
@@ -254,6 +259,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         taskVals.put(LOCATION_ID, task6.get_task_location_id());
         taskVals.put(USER_ID, task6.get_task_user_id());
         taskVals.put(TASK_STATUS, task6.get_task_completion_status());
+        taskVals.put(LOCATION_TRASH_LEVEL, task6.get_task_trash_level());
 
         db_task.insert(TABLE_TASKS, null, taskVals);
 
@@ -284,6 +290,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         finally {
             locationCursor.close();
+            db.close();
         }
         return locationData;
     }
@@ -308,6 +315,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         finally {
             userProfileCursor.close();
+            db.close();
         }
         userData = this.fetchRoleData(userData);
         return userData;
@@ -331,6 +339,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return null;
         userRoleCursor.moveToFirst();
         user.set_user_role_descr(userRoleCursor.getString(0));
+        db.close();
         return user;
     }
 
@@ -342,12 +351,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if(userRole == 1)
         {
             /* Create a cursor to read data */
-            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T ORDER BY T."+TASK_STATUS+", T."+LOCATION_ID;
+            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+", T."+LOCATION_TRASH_LEVEL+" FROM "+TABLE_TASKS+" T ORDER BY T."+TASK_STATUS+", T."+LOCATION_ID;
             countQuery = "SELECT Count(T."+TASK_ID+") FROM "+TABLE_TASKS+" T";
         }
         else
         {
-            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+" FROM "+TABLE_TASKS+" T WHERE T."+USER_ID+" = "+userId+" ORDER BY T."+TASK_STATUS+", T."+LOCATION_ID;
+            query = "SELECT T."+TASK_ID+", T."+LOCATION_ID+", T."+USER_ID+", T."+TASK_STATUS+", T."+LOCATION_TRASH_LEVEL+" FROM "+TABLE_TASKS+" T WHERE T."+USER_ID+" = "+userId+" ORDER BY T."+TASK_STATUS+", T."+LOCATION_ID;
             countQuery = "SELECT Count(T."+TASK_ID+") FROM "+TABLE_TASKS+" T WHERE T."+USER_ID+" = "+userId;
         }
         Cursor taskCursor = db.rawQuery(query, null);
@@ -369,13 +378,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     taskData.set_task_staff_name(userDetails.getString(0));
                     userDetails.close();
                     taskData.set_task_completion_status(Integer.parseInt(taskCursor.getString(3)));
+                    taskData.set_task_trash_level(Integer.parseInt(taskCursor.getString(4)));
                     retObj.add(taskData);
                 }while (taskCursor.moveToNext());
             }
         }
         finally {
             taskCursor.close();
+            db.close();
         }
         return retObj;
+    }
+
+    /* Update Task */
+    public int updateTask(Task taskObj)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues updateValues = new ContentValues();
+        updateValues.put(TASK_STATUS, 2);
+        updateValues.put(LOCATION_TRASH_LEVEL, 30);
+        int update = db.update(TABLE_TASKS, updateValues, TASK_ID+"="+taskObj.get_task_id(), null);
+        if(update!=0) {
+            ContentValues locUpdate = new ContentValues();
+            locUpdate.put(LOCATION_TRASH_LEVEL, 30);
+            update = db.update(TABLE_LOCATION, locUpdate, LOCATION_ID + "=" + taskObj.get_task_location_id(), null);
+        }
+        db.close();
+        return update;
     }
 }

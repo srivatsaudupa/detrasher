@@ -136,4 +136,22 @@ public class DetrasherMainActivity extends AppCompatActivity {
 
         }
     }
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logging out")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent logout = new Intent(DetrasherMainActivity.this, DetrashLoginActivity.class);
+                        logout.putExtra("userId", 1);
+                        startActivity(logout);
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
 }

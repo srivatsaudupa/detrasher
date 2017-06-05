@@ -48,6 +48,10 @@
         <activity
             android:name=".DetrasherTrashManagerActivity"
             android:label="@string/trash_task_assign_header" />
+
+        <activity
+            android:name=".DetrasherTaskManagerActivity"
+            android:label="@string/trash_task_complete_header" />
     </application>
 
 </manifest>

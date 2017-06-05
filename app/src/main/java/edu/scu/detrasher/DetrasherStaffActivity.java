@@ -22,6 +22,7 @@ public class DetrasherStaffActivity extends AppCompatActivity {
         setSupportActionBar(appToolBar);
         appToolBar.showOverflowMenu();
         appToolBar.setTitleTextColor(0xFFFFFFFF);
+
         /* Recycler Icon */
         ImageView taskManager = (ImageView) findViewById(R.id.taskManager);
 
@@ -108,5 +109,23 @@ public class DetrasherStaffActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logging out")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent logout = new Intent(DetrasherStaffActivity.this, DetrashLoginActivity.class);
+                        logout.putExtra("userId", 1);
+                        startActivity(logout);
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 }
