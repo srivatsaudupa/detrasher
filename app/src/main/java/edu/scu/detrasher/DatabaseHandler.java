@@ -5,6 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
+import android.os.Handler;
+
+import com.ubidots.ApiClient;
+import com.ubidots.Value;
+import com.ubidots.Variable;
 
 import java.util.ArrayList;
 
@@ -77,53 +83,55 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /* 1. Create user data */
     public void createUsers()
     {
-        User user1 = new User(1, "jack", "Jack Smith", "jack", 1);
-        User user2 = new User(2, "john", "John Doe", "john", 2);
-        User user3 = new User(3, "jane", "Jane Mars", "jane", 2);
-        User user4 = new User(4, "charles", "Charles Martin", "charles", 1);
-        SQLiteDatabase db_user = this.getWritableDatabase();
+        if(!isDataExists(TABLE_USERS)) {
+            User user1 = new User(1, "jack", "Jack Smith", "jack", 1);
+            User user2 = new User(2, "john", "John Doe", "john", 2);
+            User user3 = new User(3, "jane", "Jane Mars", "jane", 2);
+            User user4 = new User(4, "charles", "Charles Martin", "charles", 1);
+            SQLiteDatabase db_user = this.getWritableDatabase();
 
-        ContentValues user_values = new ContentValues();
-        user_values.put(USER_ID, user1.get_user_id());
-        user_values.put(USER_NAME, user1.get_user_name());
-        user_values.put(USER_FULLNAME, user1.get_user_full_name());
-        user_values.put(USER_PASSWORD, user1.get_user_password());
-        user_values.put(USER_ROLE_NO, user1.get_user_role_no());
-
-        /* Insert data to table */
-        db_user.insert(TABLE_USERS, null, user_values);
-
-        user_values.put(USER_ID, user2.get_user_id());
-        user_values.put(USER_NAME, user2.get_user_name());
-        user_values.put(USER_FULLNAME, user2.get_user_full_name());
-        user_values.put(USER_PASSWORD, user2.get_user_password());
-        user_values.put(USER_ROLE_NO, user2.get_user_role_no());
+            ContentValues user_values = new ContentValues();
+            user_values.put(USER_ID, user1.get_user_id());
+            user_values.put(USER_NAME, user1.get_user_name());
+            user_values.put(USER_FULLNAME, user1.get_user_full_name());
+            user_values.put(USER_PASSWORD, user1.get_user_password());
+            user_values.put(USER_ROLE_NO, user1.get_user_role_no());
 
         /* Insert data to table */
-        db_user.insert(TABLE_USERS, null, user_values);
+            db_user.insert(TABLE_USERS, null, user_values);
 
-        user_values.put(USER_ID, user3.get_user_id());
-        user_values.put(USER_NAME, user3.get_user_name());
-        user_values.put(USER_FULLNAME, user3.get_user_full_name());
-        user_values.put(USER_PASSWORD, user3.get_user_password());
-        user_values.put(USER_ROLE_NO, user3.get_user_role_no());
-
-        /* Insert data to table */
-        db_user.insert(TABLE_USERS, null, user_values);
-
-        user_values.put(USER_ID, user4.get_user_id());
-        user_values.put(USER_NAME, user4.get_user_name());
-        user_values.put(USER_FULLNAME, user4.get_user_full_name());
-        user_values.put(USER_PASSWORD, user4.get_user_password());
-        user_values.put(USER_ROLE_NO, user4.get_user_role_no());
+            user_values.put(USER_ID, user2.get_user_id());
+            user_values.put(USER_NAME, user2.get_user_name());
+            user_values.put(USER_FULLNAME, user2.get_user_full_name());
+            user_values.put(USER_PASSWORD, user2.get_user_password());
+            user_values.put(USER_ROLE_NO, user2.get_user_role_no());
 
         /* Insert data to table */
-        db_user.insert(TABLE_USERS, null, user_values);
+            db_user.insert(TABLE_USERS, null, user_values);
 
-        db_user.close();
+            user_values.put(USER_ID, user3.get_user_id());
+            user_values.put(USER_NAME, user3.get_user_name());
+            user_values.put(USER_FULLNAME, user3.get_user_full_name());
+            user_values.put(USER_PASSWORD, user3.get_user_password());
+            user_values.put(USER_ROLE_NO, user3.get_user_role_no());
+
+        /* Insert data to table */
+            db_user.insert(TABLE_USERS, null, user_values);
+
+            user_values.put(USER_ID, user4.get_user_id());
+            user_values.put(USER_NAME, user4.get_user_name());
+            user_values.put(USER_FULLNAME, user4.get_user_full_name());
+            user_values.put(USER_PASSWORD, user4.get_user_password());
+            user_values.put(USER_ROLE_NO, user4.get_user_role_no());
+
+        /* Insert data to table */
+            db_user.insert(TABLE_USERS, null, user_values);
+
+            db_user.close();
 
         /* Create Roles */
-        this.createRoles();
+            this.createRoles();
+        }
     }
     /* 2. Create Role Data */
     public void createRoles()
@@ -147,13 +155,56 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    /* 3. User Authenticate */
+    /* 4. Create Location data */
+    public void createLocations()
+    {
+        if(!this.isDataExists(TABLE_LOCATION)) {
+            Location loc1 = new Location("Learning Commons", 1, 1, 6);
+            this.dbLocInsert(loc1);
+            Location loc2 = new Location("Learning Commons", 1, 2, 10);
+            this.dbLocInsert(loc2);
+            Location loc3 = new Location("Learning Commons", 2, 1, 15);
+            this.dbLocInsert(loc3);
+            Location loc4 = new Location("Engineering", 3, 1, 21);
+            this.dbLocInsert(loc4);
+            Location loc5 = new Location("Engineering", 3, 2, 25);
+            this.dbLocInsert(loc5);
+            Location loc6 = new Location("Engineering", 2, 1, 30);
+            this.dbLocInsert(loc6);
+        }
+    }
+    /* DB Location insert method */
+    public void dbLocInsert(Location location)
+    {
+        SQLiteDatabase db_loc = this.getWritableDatabase();
+        ContentValues locValues = new ContentValues();
+        locValues.put(LOCATION_NAME, location.get_location_name());
+        locValues.put(LOCATION_FLOOR, location.get_location_floor());
+        locValues.put(LOCATION_TRASH_ID, location.get_location_trash_id());
+        locValues.put(LOCATION_TRASH_LEVEL, location.get_location_trash_level());
+        db_loc.insert(TABLE_LOCATION, null, locValues);
+        db_loc.close();
+    }
+
+    /* Check if data exists before inserting */
+    public boolean isDataExists(String table_name)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor existsCursor = db.rawQuery("SELECT Count(*) FROM "+table_name, null);
+        existsCursor.moveToFirst();
+        if(Integer.parseInt(existsCursor.getString(0)) == 0)
+            return false;
+        return true;
+    }
+
+    /************************** Data Manipulations *************************/
+    /* User Authenticate */
     public User AuthenticationController(User user_data)
     {
         SQLiteDatabase db = this.getReadableDatabase();
         /* Create a cursor to read data */
 
-            Cursor userCursor = db.query(TABLE_USERS, new String[]{USER_ID, USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, USER_NAME + "=?", new String[]{user_data.get_user_name()}, null, null, null, null);
+        Cursor userCursor = db.query(TABLE_USERS, new String[]{USER_ID, USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, USER_NAME + "=?", new String[]{user_data.get_user_name()}, null, null, null, null);
         try {
             if (userCursor == null)
                 return null;
@@ -174,99 +225,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    /* 4. Create Location data */
-    public void createLocations()
-    {
-        Location loc1 = new Location("Learning Commons", 1, 1, 6);
-        this.dbLocInsert(loc1);
-        Location loc2 = new Location("Learning Commons", 1, 2, 10);
-        this.dbLocInsert(loc2);
-        Location loc3 = new Location("Learning Commons", 2, 1, 15);
-        this.dbLocInsert(loc3);
-        Location loc4 = new Location("Engineering", 3, 1, 21);
-        this.dbLocInsert(loc4);
-        Location loc5 = new Location("Engineering", 3, 2, 25);
-        this.dbLocInsert(loc5);
-        Location loc6 = new Location("Engineering", 2, 1, 30);
-        this.dbLocInsert(loc6);
-    }
-    /* DB Location insert method */
-    public void dbLocInsert(Location location)
-    {
-        SQLiteDatabase db_loc = this.getWritableDatabase();
-        ContentValues locValues = new ContentValues();
-        locValues.put(LOCATION_NAME, location.get_location_name());
-        locValues.put(LOCATION_FLOOR, location.get_location_floor());
-        locValues.put(LOCATION_TRASH_ID, location.get_location_trash_id());
-        locValues.put(LOCATION_TRASH_LEVEL, location.get_location_trash_level());
-        db_loc.insert(TABLE_LOCATION, null, locValues);
-        db_loc.close();
-    }
-    /* Create task */
-    public void createTask()
-    {
-        this.createLocations();
-        SQLiteDatabase db_task = this.getWritableDatabase();
-        Task task1 = new Task(1, 1, 2, 1, 6);
-        Task task2 = new Task(2, 2, 2, 1, 10);
-        Task task3 = new Task(3, 3, 3, 1, 15);
-        Task task4 = new Task(4, 4, 2, 2, 30);
-        Task task5 = new Task(5, 5, 2, 2, 30);
-        Task task6 = new Task(6, 6, 3, 2, 30);
-
-        ContentValues taskVals = new ContentValues();
-        taskVals.put(TASK_ID, task1.get_task_id());
-        taskVals.put(LOCATION_ID, task1.get_task_location_id());
-        taskVals.put(USER_ID, task1.get_task_user_id());
-        taskVals.put(TASK_STATUS, task1.get_task_completion_status());
-        taskVals.put(LOCATION_TRASH_LEVEL, task1.get_task_trash_level());
-
-        db_task.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task2.get_task_id());
-        taskVals.put(LOCATION_ID, task2.get_task_location_id());
-        taskVals.put(USER_ID, task2.get_task_user_id());
-        taskVals.put(TASK_STATUS, task2.get_task_completion_status());
-        taskVals.put(LOCATION_TRASH_LEVEL, task2.get_task_trash_level());
-
-        db_task.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task3.get_task_id());
-        taskVals.put(LOCATION_ID, task3.get_task_location_id());
-        taskVals.put(USER_ID, task3.get_task_user_id());
-        taskVals.put(TASK_STATUS, task3.get_task_completion_status());
-        taskVals.put(LOCATION_TRASH_LEVEL, task3.get_task_trash_level());
-
-        db_task.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task4.get_task_id());
-        taskVals.put(LOCATION_ID, task4.get_task_location_id());
-        taskVals.put(USER_ID, task4.get_task_user_id());
-        taskVals.put(TASK_STATUS, task4.get_task_completion_status());
-        taskVals.put(LOCATION_TRASH_LEVEL, task4.get_task_trash_level());
-
-        db_task.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task5.get_task_id());
-        taskVals.put(LOCATION_ID, task5.get_task_location_id());
-        taskVals.put(USER_ID, task5.get_task_user_id());
-        taskVals.put(TASK_STATUS, task5.get_task_completion_status());
-        taskVals.put(LOCATION_TRASH_LEVEL, task5.get_task_trash_level());
-
-        db_task.insert(TABLE_TASKS, null, taskVals);
-
-        taskVals.put(TASK_ID, task6.get_task_id());
-        taskVals.put(LOCATION_ID, task6.get_task_location_id());
-        taskVals.put(USER_ID, task6.get_task_user_id());
-        taskVals.put(TASK_STATUS, task6.get_task_completion_status());
-        taskVals.put(LOCATION_TRASH_LEVEL, task6.get_task_trash_level());
-
-        db_task.insert(TABLE_TASKS, null, taskVals);
-
-        db_task.close();
-    }
-
-    /************************** Data Manipulations *************************/
     /* Method to populate location data */
     public ArrayList<Location> populateLocationData()
     {
@@ -320,7 +278,40 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         userData = this.fetchRoleData(userData);
         return userData;
     }
-    /* Method 2: Update user profile */
+    /* Method 1: Fetch user data */
+    public ArrayList<User> fetchAllUserData()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        /* Create a cursor to read data */
+        Cursor userProfileCursor = db.query(TABLE_USERS, new String[] {USER_ID, USER_NAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE_NO}, null, null, null,null,null,null);
+        ArrayList<User> userDataList = new ArrayList<User>();
+        try {
+            if (userProfileCursor == null)
+                return null;
+            userProfileCursor.moveToFirst();
+            do {
+                User userData = new User();
+                userData.set_user_id(Integer.parseInt(userProfileCursor.getString(0)));
+                userData.set_user_name(userProfileCursor.getString(1));
+                userData.set_user_fullname(userProfileCursor.getString(2));
+                userData.set_user_password(userProfileCursor.getString(3));
+                userData.set_user_role_no(Integer.parseInt(userProfileCursor.getString(4)));
+                if(userData.get_user_role_no() == 1)
+                    userData.set_user_role_descr("Manager");
+                else
+                    userData.set_user_role_descr("Staff");
+                userDataList.add(userData);
+            }while(userProfileCursor.moveToNext());
+        }
+        finally {
+            userProfileCursor.close();
+            db.close();
+        }
+
+        return userDataList;
+    }
+
+    /* Method 3: Update user profile */
     public int updateUserData(User userData)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -331,6 +322,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         return update;
     }
+
+    /* Fetch role data */
     public User fetchRoleData(User user)
     {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -342,7 +335,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         return user;
     }
-
+    /* Fetch User List */
+    public ArrayList<String> fetchStaffData()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor userCursor = db.query(TABLE_USERS, new String[]{USER_ID, USER_FULLNAME}, USER_ROLE_NO+"=?", new String[]{"2"}, null, null, null, null);
+        ArrayList<String> userList = new ArrayList<String>();
+        userCursor.moveToFirst();
+        do{
+            userList.add(userCursor.getString(0)+" "+userCursor.getString(1));
+        }while (userCursor.moveToNext());
+        return userList;
+    }
+    /* Fetch location Data */
+    public Integer fetchLocationData(int location_id)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor locCursor = db.query(TABLE_LOCATION, new String[]{LOCATION_TRASH_LEVEL}, LOCATION_ID+"=?", new String[]{location_id+""}, null, null, null, null);
+        locCursor.moveToFirst();
+        return Integer.parseInt(locCursor.getString(0));
+    }
+    /* Fetch Assigned tasks */
     public ArrayList<Task> fetchAssignedTaskData(int userId, int userRole)
     {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -390,6 +403,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return retObj;
     }
 
+    /* Create Task */
+    public long createTask(Task newTask)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues taskValues = new ContentValues();
+        taskValues.put(LOCATION_ID, newTask.get_task_location_id());
+        taskValues.put(USER_ID, newTask.get_task_user_id());
+        taskValues.put(TASK_STATUS, 1);
+        taskValues.put(LOCATION_TRASH_LEVEL, newTask.get_task_trash_level());
+        return db.insert(TABLE_TASKS, null, taskValues);
+    }
+
     /* Update Task */
     public int updateTask(Task taskObj)
     {
@@ -405,5 +431,81 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         db.close();
         return update;
+    }
+
+    /* check if task is already assigned */
+    public int isTaskAssigned(Task checkTask)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT "+TASK_ID+" FROM "+TABLE_TASKS+" WHERE "+LOCATION_ID+"="+checkTask.get_task_location_id()+" AND "+TASK_STATUS+"=1";
+        Cursor isTaskCursor = db.rawQuery(query, null);
+        if(isTaskCursor == null)
+            return 0;
+
+        if(isTaskCursor.moveToFirst())
+            return 0;
+        return 1;
+    }
+    /* Update location trash level */
+    public int updateLocation(Location updatedLocation)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues updateValues = new ContentValues();
+        updateValues.put(LOCATION_TRASH_LEVEL, updatedLocation.get_location_trash_level());
+
+        int update = db.update(TABLE_LOCATION, updateValues, LOCATION_ID+"="+updatedLocation.get_location_id(), null);
+        if(update!=0) {
+            ContentValues locUpdate = new ContentValues();
+            locUpdate.put(LOCATION_TRASH_LEVEL, updatedLocation.get_location_trash_level());
+            update = db.update(TABLE_TASKS, updateValues, LOCATION_ID + "=" + updatedLocation.get_location_id(), null);
+        }
+        db.close();
+        return update;
+    }
+
+    public class ApiUbidots extends AsyncTask<Integer, Void, Value[]> {
+        private final String API_KEY = "YOUR API KEY";
+        private final String VARIABLE_ID_1 = "VARIABLE ID";
+        private final String VARIABLE_ID_2 = "VARIABLE ID";
+
+        @Override
+        protected Value[] doInBackground(Integer... params) {
+            ApiClient apiClient = new ApiClient(API_KEY);
+
+            /* Sync First location trash level */
+            Variable trashLevel = apiClient.getVariable(VARIABLE_ID_1);
+            Value[] trashLevelValueLoc1 = trashLevel.getValues();
+            Location location1Update = new Location();
+            location1Update.set_location_id(1);
+            location1Update.set_location_trash_level((int)trashLevelValueLoc1[0].getValue());
+            updateLocation(location1Update);
+
+            /* Sync Second location trash level */
+            trashLevel = apiClient.getVariable(VARIABLE_ID_2);
+            Value[] trashLevelValueLoc2 = trashLevel.getValues();
+            Location location2Update = new Location();
+            location2Update.set_location_id(2);
+            location2Update.set_location_trash_level((int)trashLevelValueLoc2[0].getValue());
+            updateLocation(location2Update);
+            return trashLevelValueLoc2;
+        }
+
+        @Override
+        protected void onPostExecute(Value[] variableValues) {
+            // Update your views here
+        }
+    }
+
+    /* Initiate db sync process from ubidots */
+    public void dbSync()
+    {
+        final Handler ubiHandler = new Handler();
+        ubiHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                new ApiUbidots().execute();
+                ubiHandler.postDelayed(this, 10000);
+            }
+        }, 10000);
     }
 }

@@ -51,19 +51,20 @@ public class TaskListAdapter extends ArrayAdapter<Task> implements View.OnClickL
                         Snackbar.make(v, "This task is complete. No action required", Snackbar.LENGTH_LONG)
                                 .setAction("No action", null).show();
                     }
-                    else
-                    {
-                        Intent taskManager = new Intent(mContext, DetrasherTaskManagerActivity.class);
-                        taskManager.putExtra("task_id", taskObj.get_task_id());
-                        taskManager.putExtra("userId", taskObj.get_task_user_id());
-                        taskManager.putExtra("userRole", 2);
-                        taskManager.putExtra("location_id", taskObj.get_task_location_id());
-                        taskManager.putExtra("loc_descr", taskObj.get_task_location_descr());
-                        taskManager.putExtra("trash_level", taskObj.get_task_trash_level());
-                        taskManager.putExtra("assigned_to", taskObj.get_task_staff_name());
-                        taskManager.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        taskManager.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        mContext.startActivity(taskManager);
+                    else {
+                        if (taskObj.get_task_id() != 0) {
+                            Intent taskManager = new Intent(mContext, DetrasherTaskManagerActivity.class);
+                            taskManager.putExtra("task_id", taskObj.get_task_id());
+                            taskManager.putExtra("userId", taskObj.get_task_user_id());
+                            taskManager.putExtra("userRole", 2);
+                            taskManager.putExtra("location_id", taskObj.get_task_location_id());
+                            taskManager.putExtra("loc_descr", taskObj.get_task_location_descr());
+                            taskManager.putExtra("trash_level", taskObj.get_task_trash_level());
+                            taskManager.putExtra("assigned_to", taskObj.get_task_staff_name());
+                            taskManager.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            taskManager.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            mContext.startActivity(taskManager);
+                        }
                     }
                     break;
             }
@@ -104,7 +105,12 @@ public class TaskListAdapter extends ArrayAdapter<Task> implements View.OnClickL
 
         viewHolder.staffName.setText(taskObj.get_task_staff_name());
         viewHolder.trashID.setText(taskObj.get_task_location_descr());
-        if(taskObj.get_task_completion_status() == 2)
+
+        if(taskObj.get_task_id() == 0)
+        {
+            viewHolder.statusIcon.setImageResource(R.drawable.no_pending_task);
+        }
+        else if(taskObj.get_task_completion_status() == 2)
         {
             viewHolder.statusIcon.setImageResource(R.drawable.complete_task_icon);
         }
@@ -112,6 +118,7 @@ public class TaskListAdapter extends ArrayAdapter<Task> implements View.OnClickL
         {
             viewHolder.statusIcon.setImageResource(R.drawable.inprogress_task_icon);
         }
+
         viewHolder.statusIcon.setTag(position);
         viewHolder.statusIcon.setOnClickListener(this);
         // Return the completed view to render on screen

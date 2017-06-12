@@ -31,7 +31,17 @@ public class DetrasherTrashActivity extends AppCompatActivity {
 
         /* To obtain data from DB */
         ArrayList<Location> locList = fetchLocations();
-        LocationListAdapter custAdapter = new LocationListAdapter(locList, getApplicationContext(), userRole);
+        if(locList.isEmpty())
+        {
+            Location emptyIndicator = new Location();
+            emptyIndicator.set_location_id(1);
+            emptyIndicator.set_location_name("No Locations in the Database");
+            emptyIndicator.set_location_floor(0);
+            emptyIndicator.set_location_trash_id(0);
+            emptyIndicator.set_location_trash_level(0);
+            locList.add(emptyIndicator);
+        }
+        LocationListAdapter custAdapter = new LocationListAdapter(locList, getApplicationContext(), userRole, userId);
 
         ListView listView = (ListView)findViewById(R.id.locList);
 
@@ -58,6 +68,8 @@ public class DetrasherTrashActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent logout = new Intent(DetrasherTrashActivity.this, DetrashLoginActivity.class);
                                 logout.putExtra("userId", 1);
+                                logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_NEW_TASK );
+                                logout.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 startActivity(logout);
                                 finish();
                             }
@@ -96,4 +108,6 @@ public class DetrasherTrashActivity extends AppCompatActivity {
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
         return dbHandler.populateLocationData();
     }
+
+
 }

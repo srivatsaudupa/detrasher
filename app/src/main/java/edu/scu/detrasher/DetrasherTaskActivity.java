@@ -32,6 +32,17 @@ public class DetrasherTaskActivity extends AppCompatActivity {
 
         /* To obtain data from DB */
         ArrayList<Task> taskList = fetchTasks(userId, userRole);
+        if(taskList.isEmpty())
+        {
+            Task emptyTask = new Task();
+            emptyTask.set_task_location_desc("No tasks assigned");
+            emptyTask.set_task_staff_name("All is well");
+            emptyTask.set_task_trash_level(0);
+            emptyTask.set_task_user_id(userId);
+            emptyTask.set_task_id(0);
+            emptyTask.set_task_completion_status(1);
+            taskList.add(emptyTask);
+        }
         TaskListAdapter custAdapter = new TaskListAdapter(taskList, getApplicationContext(), userRole);
 
         ListView listView = (ListView)findViewById(R.id.taskList);
@@ -59,6 +70,8 @@ public class DetrasherTaskActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent logout = new Intent(DetrasherTaskActivity.this, DetrashLoginActivity.class);
                                 logout.putExtra("userId", 1);
+                                logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_NEW_TASK );
+                                logout.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 startActivity(logout);
                                 finish();
                             }

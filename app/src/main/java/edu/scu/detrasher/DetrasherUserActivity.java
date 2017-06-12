@@ -8,56 +8,42 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
+import android.widget.ListView;
 
-public class DetrasherStaffActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class DetrasherUserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detrasher_staff);
+        setContentView(R.layout.activity_detrasher_workforce_view);
         /* Tool bar handler */
         Toolbar appToolBar = (Toolbar) findViewById(R.id.detrasher_toolbar);
         setSupportActionBar(appToolBar);
         appToolBar.showOverflowMenu();
         appToolBar.setTitleTextColor(0xFFFFFFFF);
 
-        /* Recycler Icon */
-        ImageView taskManager = (ImageView) findViewById(R.id.taskManager);
-
-        /* Junk manager icon */
-        final ImageView settings = (ImageView) findViewById(R.id.settings);
-
-        /* session data */
+        /* Get Session Data */
         Intent thisIntent = getIntent();
         final int userId = thisIntent.getIntExtra("userId", 0);
         final int userRole = thisIntent.getIntExtra("userRole", 0);
 
-        /* Click listeners */
-        /* Recycle Bin */
-        taskManager.setOnClickListener(new View.OnClickListener(){
+        /* To obtain data from DB */
+        ArrayList<User> userList = fetchWorkforce();
+        if(userList.isEmpty())
+        {
+            User emptyIndicator = new User();
+            emptyIndicator.set_user_id(0);
+            emptyIndicator.set_user_fullname("No Users");
+            userList.add(emptyIndicator);
+        }
+        UserListAdapter custAdapter = new UserListAdapter(userList, getApplicationContext(), userRole, userId);
 
-            @Override
-            public void onClick(View v) {
-                Intent taskIntent = new Intent(DetrasherStaffActivity.this, DetrasherTaskActivity.class);
-                taskIntent.putExtra("userId", userId);
-                taskIntent.putExtra("userRole", userRole);
-                startActivity(taskIntent);
-            }
-        });
+        ListView listView = (ListView)findViewById(R.id.userList);
 
-        /* Junk Manager */
-        settings.setOnClickListener(new View.OnClickListener(){
+        listView.setAdapter(custAdapter);
 
-            @Override
-            public void onClick(View v) {
-                Intent settingsIntent = new Intent(DetrasherStaffActivity.this, DetrasherProfileActivity.class);
-                settingsIntent.putExtra("userId", userId);
-                settingsIntent.putExtra("userRole", userRole);
-                startActivity(settingsIntent);
-            }
-        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,11 +63,11 @@ public class DetrasherStaffActivity extends AppCompatActivity {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent logout = new Intent(DetrasherStaffActivity.this, DetrashLoginActivity.class);
+                                Intent logout = new Intent(DetrasherUserActivity.this, DetrashLoginActivity.class);
                                 logout.putExtra("userId", 1);
-                                startActivity(logout);
                                 logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_NEW_TASK );
                                 logout.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                startActivity(logout);
                                 finish();
                             }
                         })
@@ -95,10 +81,10 @@ public class DetrasherStaffActivity extends AppCompatActivity {
                 int role = thisIntent.getIntExtra("userRole",0);
                 Intent homeIntent;
                 if(role == 1) {
-                    homeIntent = new Intent(DetrasherStaffActivity.this, DetrasherMainActivity.class);
+                    homeIntent = new Intent(DetrasherUserActivity.this, DetrasherMainActivity.class);
                 }
                 else {
-                    homeIntent = new Intent(DetrasherStaffActivity.this, DetrasherStaffActivity.class);
+                    homeIntent = new Intent(DetrasherUserActivity.this, DetrasherStaffActivity.class);
                 }
                 homeIntent.putExtra("userId", thisIntent.getIntExtra("userId",0));
                 homeIntent.putExtra("userRole", role);
@@ -112,22 +98,13 @@ public class DetrasherStaffActivity extends AppCompatActivity {
 
         }
     }
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setTitle("Logging out")
-                .setMessage("Are you sure you want to log out?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent logout = new Intent(DetrasherStaffActivity.this, DetrashLoginActivity.class);
-                        logout.putExtra("userId", 1);
-                        startActivity(logout);
-                        finish();
-                    }
-                })
-                .setNegativeButton("No", null)
-                .show();
+    /* Fetch data from DB */
+    public ArrayList<User> fetchWorkforce()
+    {
+        DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
+        return dbHandler.fetchAllUserData();
     }
+
+
 }

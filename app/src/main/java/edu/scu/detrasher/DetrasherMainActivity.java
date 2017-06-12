@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class DetrasherMainActivity extends AppCompatActivity {
 
@@ -57,7 +56,10 @@ public class DetrasherMainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Staff Manager", Toast.LENGTH_SHORT).show();
+                Intent workforceIntent = new Intent(DetrasherMainActivity.this, DetrasherUserActivity.class);
+                workforceIntent.putExtra("userId", userId);
+                workforceIntent.putExtra("userRole", userRole);
+                startActivity(workforceIntent);
             }
         });
 
@@ -105,6 +107,8 @@ public class DetrasherMainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent logout = new Intent(DetrasherMainActivity.this, DetrashLoginActivity.class);
                                 logout.putExtra("userId", 1);
+                                logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_NEW_TASK );
+                                logout.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 startActivity(logout);
                                 finish();
                             }

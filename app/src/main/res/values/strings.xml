@@ -12,6 +12,7 @@
     <string name="trash_manager_header">Trash Level Manager</string>
     <string name="trash_task_assign_header">Manage Trash</string>
     <string name="trash_task_complete_header">Worklist Item</string>
+    <string name="workforce_header">Workforce Admin</string>
 
     <string name="username_label">User Name</string>
     <string name="userfullname_label">Full Name</string>
@@ -37,4 +38,6 @@
     <string name="assign_task_button_txt">Assign Task</string>
     <string name="complete_task_button_txt">Mark Task Complete</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="assign_task_to">Assign Task to</string>
 </resources>

@@ -110,6 +110,19 @@
                         </TableRow>
                         <TableRow
                             android:gravity="center_horizontal">
+                            <TextView
+                                android:id="@+id/assignTaskTo"
+                                android:gravity="center_horizontal"
+                                android:text="@string/assign_task_to"
+                                android:padding="3dip" />
+                            <Spinner
+                                android:id="@+id/user_spinner"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </TableRow>
+                        <TableRow
+                            android:gravity="center_horizontal">
                             <Button
                                 android:id="@+id/assignTask"
                                 android:layout_width="match_parent"

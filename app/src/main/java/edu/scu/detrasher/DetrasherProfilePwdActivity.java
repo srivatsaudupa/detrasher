@@ -107,6 +107,8 @@ public class DetrasherProfilePwdActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent logout = new Intent(DetrasherProfilePwdActivity.this, DetrashLoginActivity.class);
                                 logout.putExtra("userId", 1);
+                                logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_NEW_TASK );
+                                logout.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 startActivity(logout);
                                 finish();
                             }

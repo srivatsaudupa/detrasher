@@ -84,6 +84,11 @@ public class DetrashLoginActivity extends AppCompatActivity {
 
         /* Add data to db created */
         dbHandler.createUsers();
-        dbHandler.createTask();
+        dbHandler.createLocations();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }
